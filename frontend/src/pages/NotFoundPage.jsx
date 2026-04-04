@@ -1,27 +1,27 @@
-import PageWrapper from '@components/layout/PageWrapper'
-import Button      from '@components/ui/Button'
+import PageWrapper     from '@components/layout/PageWrapper'
+import Button          from '@components/ui/Button'
+import SceneBackground from '@components/layout/SceneBackground'
 
 export default function NotFoundPage() {
   return (
     <PageWrapper>
       <section style={{
-        minHeight:   '100vh',
-        display:     'flex',
-        alignItems:  'center',
-        padding:     'clamp(4rem, 8vw, 8rem) 2.5rem',
-        position:    'relative',
-        overflow:    'hidden',
+        minHeight:  '100vh',
+        display:    'flex',
+        alignItems: 'center',
+        padding:    'clamp(4rem, 8vw, 8rem) 2.5rem',
+        position:   'relative',
+        overflow:   'hidden',
       }}>
-        <div style={{
-          position:      'absolute',
-          top:           '50%',
-          left:          '50%',
-          transform:     'translate(-50%, -50%)',
-          width:         '60vw',
-          height:        '60vw',
-          background:    'radial-gradient(ellipse, rgba(71,49,152,0.07) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
+        <SceneBackground
+          gridOpacity={0.13}
+          glow1Color="rgba(71,49,152,0.20)"
+          glow2Color="rgba(71,49,152,0.10)"
+          glow1Pos={{ top: '5%', right: '-5%' }}
+          glow2Pos={{ bottom: '-10%', left: '-5%' }}
+          scanLine
+          parallaxStrength={0.9}
+        />
 
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}>
 

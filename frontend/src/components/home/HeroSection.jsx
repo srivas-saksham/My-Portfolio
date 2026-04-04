@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AvailableBadge from './AvailableBadge'
 import HeroStats from './HeroStats'
 import Button from '@components/ui/Button'
+import SceneBackground from '@components/layout/SceneBackground'
 import { SITE } from '@utils/constants'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -14,50 +15,7 @@ export default function HeroSection() {
   const subRef      = useRef(null)
   const actionsRef  = useRef(null)
   const badgeRef    = useRef(null)
-  const gridRef     = useRef(null)
-  const glow1Ref    = useRef(null)
-  const glow2Ref    = useRef(null)
   const statsRef    = useRef(null)
-
-  // Mouse parallax
-  useEffect(() => {
-    const section = sectionRef.current
-    const glow1   = glow1Ref.current
-    const glow2   = glow2Ref.current
-    const grid    = gridRef.current
-    if (!section || !glow1 || !glow2 || !grid) return
-
-    const onMove = (e) => {
-      const { clientX, clientY, currentTarget } = e
-      const { width, height, left, top } = currentTarget.getBoundingClientRect()
-      const x = (clientX - left) / width   // 0–1
-      const y = (clientY - top)  / height  // 0–1
-      const dx = (x - 0.5) * 2  // -1 to 1
-      const dy = (y - 0.5) * 2
-
-      gsap.to(glow1, {
-        x: dx * 60,
-        y: dy * 40,
-        duration: 1.4,
-        ease: 'power2.out',
-      })
-      gsap.to(glow2, {
-        x: dx * -40,
-        y: dy * -30,
-        duration: 1.8,
-        ease: 'power2.out',
-      })
-      gsap.to(grid, {
-        x: dx * 12,
-        y: dy * 8,
-        duration: 2,
-        ease: 'power2.out',
-      })
-    }
-
-    section.addEventListener('mousemove', onMove)
-    return () => section.removeEventListener('mousemove', onMove)
-  }, [])
 
   // Entrance animation
   useEffect(() => {
@@ -107,73 +65,15 @@ export default function HeroSection() {
         background: 'var(--bg-base)',
       }}
     >
-      {/* ── Grid background — interactive parallax ── */}
-      <div
-        ref={gridRef}
-        aria-hidden="true"
-        style={{
-          position:        'absolute',
-          inset:           '-5%',
-          backgroundImage: `
-            linear-gradient(rgba(206, 206, 206, 0.13) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(71, 49, 152, 0.17) 1px, transparent 1px)
-          `,
-          backgroundSize:  '72px 72px',
-          pointerEvents:   'none',
-          zIndex:          0,
-          willChange:      'transform',
-        }}
-      />
-
-      {/* ── Glow 1 — top right, indigo ── */}
-      <div
-        ref={glow1Ref}
-        aria-hidden="true"
-        style={{
-          position:      'absolute',
-          top:           '-15%',
-          right:         '-5%',
-          width:         '55vw',
-          height:        '55vw',
-          background:    'radial-gradient(ellipse at center, rgba(71,49,152,0.22) 0%, rgba(71,49,152,0.06) 45%, transparent 70%)',
-          pointerEvents: 'none',
-          zIndex:        0,
-          willChange:    'transform',
-          filter:        'blur(1px)',
-        }}
-      />
-
-      {/* ── Glow 2 — bottom left, cooler/deeper indigo ── */}
-      <div
-        ref={glow2Ref}
-        aria-hidden="true"
-        style={{
-          position:      'absolute',
-          bottom:        '-20%',
-          left:          '-10%',
-          width:         '45vw',
-          height:        '45vw',
-          background:    'radial-gradient(ellipse at center, rgba(71,49,152,0.14) 0%, rgba(40,20,100,0.05) 50%, transparent 70%)',
-          pointerEvents: 'none',
-          zIndex:        0,
-          willChange:    'transform',
-          filter:        'blur(2px)',
-        }}
-      />
-
-      {/* ── Horizontal scan line — subtle atmosphere ── */}
-      <div
-        aria-hidden="true"
-        style={{
-          position:   'absolute',
-          left:       0,
-          right:      0,
-          top:        '38%',
-          height:     '1px',
-          background: 'linear-gradient(90deg, transparent 0%, rgba(71,49,152,0.18) 30%, rgba(71,49,152,0.35) 50%, rgba(71,49,152,0.18) 70%, transparent 100%)',
-          pointerEvents: 'none',
-          zIndex:     0,
-        }}
+      <SceneBackground
+        gridSize={72}
+        gridOpacity={0.13}
+        glow1Color="rgba(71,49,152,0.22)"
+        glow2Color="rgba(71,49,152,0.14)"
+        glow1Pos={{ top: '-15%', right: '-5%' }}
+        glow2Pos={{ bottom: '-20%', left: '-10%' }}
+        scanLine
+        parallaxStrength={1}
       />
 
       {/* ── Content ── */}
@@ -206,27 +106,25 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* SRIVASTAVA — offset + visible stroke + gradient fill */}
+          {/* SRIVASTAVA */}
           <div style={{ overflow: 'hidden', lineHeight: 0.88, marginTop: '0.1em' }}>
             <div
               className="hero-line-inner"
               style={{
-                fontFamily:    'var(--font-display)',
-                fontSize:      'clamp(4.5rem, 14vw, 13rem)',
-                fontWeight:    300,
-                fontStyle:     'italic',
-                lineHeight:    0.88,
-                letterSpacing: '-0.04em',
-                // Gradient stroke effect: visible at 50% instead of 25%
-                color:         'transparent',
-                WebkitTextStroke: '1px rgba(245,245,245,0.45)',
-                display:       'block',
-                transform:     'translateY(110%)',
-                paddingLeft:   'clamp(1.5rem, 5vw, 7rem)',
-                // Subtle indigo shimmer on the text via background-clip
-                backgroundImage: 'linear-gradient(135deg, rgba(245,245,245,0.45) 0%, rgba(71,49,152,0.6) 50%, rgba(245,245,245,0.45) 100%)',
+                fontFamily:           'var(--font-display)',
+                fontSize:             'clamp(4.5rem, 14vw, 13rem)',
+                fontWeight:           300,
+                fontStyle:            'italic',
+                lineHeight:           0.88,
+                letterSpacing:        '-0.04em',
+                color:                'transparent',
+                WebkitTextStroke:     '1px rgba(245,245,245,0.45)',
+                display:              'block',
+                transform:            'translateY(110%)',
+                paddingLeft:          'clamp(1.5rem, 5vw, 7rem)',
+                backgroundImage:      'linear-gradient(135deg, rgba(245,245,245,0.45) 0%, rgba(71,49,152,0.6) 50%, rgba(245,245,245,0.45) 100%)',
                 WebkitBackgroundClip: 'text',
-                backgroundSize: '200% 100%',
+                backgroundSize:       '200% 100%',
               }}
             >
               SRIVASTAVA
@@ -240,9 +138,9 @@ export default function HeroSection() {
           style={{ opacity: 0 }}
         >
           <div style={{
-            display:    'flex',
-            alignItems: 'center',
-            gap:        '1.5rem',
+            display:      'flex',
+            alignItems:   'center',
+            gap:          '1.5rem',
             marginBottom: '2rem',
           }}>
             <div style={{
@@ -273,11 +171,11 @@ export default function HeroSection() {
         <div
           ref={actionsRef}
           style={{
-            display:    'flex',
-            gap:        '1rem',
-            flexWrap:   'wrap',
-            alignItems: 'center',
-            opacity:    0,
+            display:      'flex',
+            gap:          '1rem',
+            flexWrap:     'wrap',
+            alignItems:   'center',
+            opacity:      0,
             marginBottom: '0rem',
           }}
         >
@@ -290,10 +188,10 @@ export default function HeroSection() {
 
           {/* Inline social hint */}
           <div style={{
-            marginLeft:    'auto',
-            display:       'flex',
-            gap:           '1rem',
-            alignItems:    'center',
+            marginLeft: 'auto',
+            display:    'flex',
+            gap:        '1rem',
+            alignItems: 'center',
           }}>
             {[
               { label: 'GH', href: SITE.github },

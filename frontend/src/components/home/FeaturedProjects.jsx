@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -6,19 +6,19 @@ import { PROJECTS } from '@data/projects'
 import SectionLabel from '@components/ui/SectionLabel'
 import Tag from '@components/ui/Tag'
 import Button from '@components/ui/Button'
+import SceneBackground from '@components/layout/SceneBackground'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const FEATURED = PROJECTS.slice(0, 3)
 
 // ─── Single Project Row ───────────────────────────────────────────────────────
-function ProjectRow({ project, index }) {
+function ProjectRow({ project }) {
   const rowRef   = useRef(null)
   const glowRef  = useRef(null)
   const [hovered, setHovered] = useState(false)
   const [mouseLocal, setMouseLocal] = useState({ x: 0.5, y: 0.5 })
 
-  // 3D tilt on hover
   const onMouseMove = (e) => {
     const rect = rowRef.current.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width
@@ -36,7 +36,6 @@ function ProjectRow({ project, index }) {
       transformStyle: 'preserve-3d',
     })
 
-    // Move white glow to mouse position
     if (glowRef.current) {
       glowRef.current.style.left = `${x * 100}%`
       glowRef.current.style.top  = `${y * 100}%`
@@ -164,7 +163,6 @@ function ProjectRow({ project, index }) {
             color:         'var(--text)',
             marginBottom:  '0.65rem',
             transition:    'color 0.25s ease',
-            // Subtle white light on hover
             textShadow:    hovered
               ? '0 0 40px rgba(255,255,255,0.12), 0 1px 0 rgba(255,255,255,0.05)'
               : 'none',
@@ -206,15 +204,15 @@ function ProjectRow({ project, index }) {
 
         {/* Arrow */}
         <div style={{
-          paddingTop:  '0.25rem',
-          position:    'relative',
-          zIndex:      1,
-          transform:   `translateZ(16px) rotate(${hovered ? '0' : '-45'}deg)`,
-          transition:  'transform 0.3s cubic-bezier(0.19,1,0.22,1)',
-          display:     'flex',
-          flexDirection:'column',
-          alignItems:  'center',
-          gap:         '0.5rem',
+          paddingTop:    '0.25rem',
+          position:      'relative',
+          zIndex:        1,
+          transform:     `translateZ(16px) rotate(${hovered ? '0' : '-45'}deg)`,
+          transition:    'transform 0.3s cubic-bezier(0.19,1,0.22,1)',
+          display:       'flex',
+          flexDirection: 'column',
+          alignItems:    'center',
+          gap:           '0.5rem',
         }}>
           <span style={{
             fontFamily: 'var(--font-mono)',
@@ -233,19 +231,8 @@ function ProjectRow({ project, index }) {
 
 // ─── Section ─────────────────────────────────────────────────────────────────
 export default function FeaturedProjects() {
-  const sectionRef = useRef(null)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
-
-  // Section-level mouse tracking for background blobs
-  useEffect(() => {
-    const onMove = (e) => setMousePos({ x: e.clientX, y: e.clientY })
-    window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
-  }, [])
-
   return (
     <section
-      ref={sectionRef}
       style={{
         padding:    'clamp(5rem, 8vw, 9rem) 2.5rem',
         background: 'var(--bg-1)',
@@ -254,57 +241,13 @@ export default function FeaturedProjects() {
         borderTop:  '1px solid rgba(255,255,255,0.035)',
       }}
     >
-      {/* Background: slow parallax white bloom following mouse */}
-      <div
-        aria-hidden="true"
-        style={{
-          position:   'absolute',
-          width:      '50vw',
-          height:     '50vw',
-          borderRadius:'50%',
-          background: 'radial-gradient(ellipse, rgba(255,255,255,0.025) 0%, transparent 60%)',
-          pointerEvents: 'none',
-          zIndex:     0,
-          left:       `${(mousePos.x / window.innerWidth) * 30 + 30}%`,
-          top:        `${(mousePos.y / window.innerHeight) * 30 + 10}%`,
-          transform:  'translate(-50%,-50%)',
-          transition: 'left 1.8s ease, top 1.8s ease',
-          filter:     'blur(2px)',
-        }}
-      />
-
-      {/* Floating geometric accent — section level */}
-      <div
-        aria-hidden="true"
-        style={{
-          position:    'absolute',
-          top:         '10%',
-          right:       '-2%',
-          width:       'clamp(100px, 12vw, 200px)',
-          height:      'clamp(100px, 12vw, 200px)',
-          borderRadius:'50%',
-          border:      '1px solid rgba(255,255,255,0.04)',
-          background:  'radial-gradient(ellipse at 35% 35%, rgba(255,255,255,0.025) 0%, transparent 65%)',
-          animation:   'floatA 10s ease-in-out infinite',
-          zIndex:      0,
-          pointerEvents:'none',
-        }}
-      />
-
-      {/* Indigo dim glow bottom-left */}
-      <div
-        aria-hidden="true"
-        style={{
-          position:    'absolute',
-          bottom:      '-5%',
-          left:        '-5%',
-          width:       '35vw',
-          height:      '35vw',
-          borderRadius:'50%',
-          background:  'radial-gradient(ellipse, rgba(71,49,152,0.06) 0%, transparent 65%)',
-          pointerEvents:'none',
-          zIndex:      0,
-        }}
+      <SceneBackground
+        gridOpacity={0.09}
+        glow1Color="rgba(255,255,255,0.025)"
+        glow2Color="rgba(71,49,152,0.06)"
+        glow1Pos={{ top: '10%', right: '30%' }}
+        glow2Pos={{ bottom: '-5%', left: '-5%' }}
+        parallaxStrength={0.6}
       />
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -313,12 +256,12 @@ export default function FeaturedProjects() {
         <div
           data-gsap="fade-up"
           style={{
-            display:         'flex',
-            alignItems:      'flex-end',
-            justifyContent:  'space-between',
-            flexWrap:        'wrap',
-            gap:             '2rem',
-            marginBottom:    '3.5rem',
+            display:        'flex',
+            alignItems:     'flex-end',
+            justifyContent: 'space-between',
+            flexWrap:       'wrap',
+            gap:            '2rem',
+            marginBottom:   '3.5rem',
           }}
         >
           <div>
@@ -347,7 +290,7 @@ export default function FeaturedProjects() {
           ))}
         </div>
 
-        {/* Bottom CTA — centered */}
+        {/* Bottom CTA */}
         <div
           data-gsap="fade-up"
           style={{
@@ -358,7 +301,6 @@ export default function FeaturedProjects() {
             gap:            '1.5rem',
           }}
         >
-          {/* Divider lines */}
           <div style={{
             flex:       1,
             height:     '1px',
@@ -379,7 +321,6 @@ export default function FeaturedProjects() {
         </div>
       </div>
 
-      {/* Inject floatA keyframe if not already in DOM */}
       <style>{`
         @keyframes floatA {
           0%,100% { transform: translateY(0px); }
