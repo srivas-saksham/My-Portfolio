@@ -11,7 +11,7 @@ export default {
         s1:      '#0f0f0f',
         s2:      '#171717',
         s3:      '#242424',
-        border:  '#242424',
+        border:  '#565656',
         ghost:   '#2a2a2a',
         text:    '#f5f5f5',
         muted:   '#5c5c5c',

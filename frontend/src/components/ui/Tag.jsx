@@ -1,6 +1,8 @@
-import { cn } from '@utils/cn'
+import { useState } from 'react'
 
-export default function Tag({ children, variant = 'default' }) {
+export default function Tag({ children, variant = 'default', interactive = false }) {
+  const [hovered, setHovered] = useState(false)
+
   const base = {
     display:       'inline-flex',
     alignItems:    'center',
@@ -12,28 +14,39 @@ export default function Tag({ children, variant = 'default' }) {
     borderRadius:  'var(--radius-pill)',
     whiteSpace:    'nowrap',
     lineHeight:    1,
+    cursor:        interactive ? 'default' : 'inherit',
+    transition:    'background 0.22s ease, color 0.22s ease, border-color 0.22s ease',
   }
 
   const variants = {
     default: {
-      background: 'var(--bg-2)',
-      border:     '1px solid var(--border)',
-      color:      'var(--muted)',
+      background:  hovered && interactive ? '#f5f5f5' : 'var(--bg-2)',
+      border:      `1px solid ${hovered && interactive ? '#f5f5f5' : 'var(--border)'}`,
+      color:       hovered && interactive ? '#080808' : 'var(--muted)',
     },
     indigo: {
-      background: 'var(--indigo-dim)',
-      border:     '1px solid rgba(71,49,152,0.25)',
-      color:      'var(--text)',
+      background:  hovered && interactive ? '#f5f5f5' : 'var(--indigo-dim)',
+      border:      `1px solid ${hovered && interactive ? '#f5f5f5' : 'rgba(71,49,152,0.25)'}`,
+      color:       hovered && interactive ? '#080808' : 'var(--text)',
     },
     ghost: {
-      background: 'transparent',
-      border:     '1px solid var(--ghost)',
-      color:      'var(--ghost)',
+      background:  hovered && interactive ? '#f5f5f5' : 'transparent',
+      border:      `1px solid ${hovered && interactive ? '#f5f5f5' : 'var(--ghost)'}`,
+      color:       hovered && interactive ? '#080808' : 'var(--ghost)',
+    },
+    live: {
+      background:  hovered && interactive ? '#f5f5f5' : 'rgba(74,222,128,0.08)',
+      border:      `1px solid ${hovered && interactive ? '#f5f5f5' : 'rgba(74,222,128,0.3)'}`,
+      color:       hovered && interactive ? '#080808' : '#4ade80',
     },
   }
 
   return (
-    <span style={{ ...base, ...variants[variant] }}>
+    <span
+      style={{ ...base, ...variants[variant] }}
+      onMouseEnter={() => interactive && setHovered(true)}
+      onMouseLeave={() => interactive && setHovered(false)}
+    >
       {children}
     </span>
   )
