@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saksham Srivastava</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0a0a0a;
+--bg2:#111111;
+--bg3:#161616;
+--border:#1f1f1f;
+--border2:#2a2a2a;
+--text:#f0ede6;
+--muted:#5a5a5a;
+--muted2:#3a3a3a;
+--accent:#e8ff47;
+--accent2:#c8e020;
+--font-head:'Syne',sans-serif;
+--font-mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-head);overflow-x:hidden;cursor:none}
+
+.cursor{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transition:transform 0.1s;mix-blend-mode:difference}
+.cursor-ring{position:fixed;width:32px;height:32px;border:1px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9998;transition:all 0.15s ease;mix-blend-mode:difference}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.5rem 3rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid transparent;transition:all 0.3s}
+nav.scrolled{background:rgba(10,10,10,0.95);border-color:var(--border);backdrop-filter:blur(12px)}
+.nav-logo{font-size:1rem;font-weight:700;letter-spacing:0.15em;color:var(--text);text-decoration:none;text-transform:uppercase}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.8rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--accent);color:#0a0a0a;padding:0.5rem 1.25rem;font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:all 0.2s}
+.nav-cta:hover{background:var(--accent2)}
+
+section{padding:8rem 3rem}
+.container{max-width:1200px;margin:0 auto}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding-top:6rem;position:relative;overflow:hidden}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.3;pointer-events:none}
+.hero-content{position:relative;z-index:1}
+.hero-tag{display:inline-flex;align-items:center;gap:0.5rem;background:var(--bg3);border:1px solid var(--border2);padding:0.35rem 0.85rem;font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);letter-spacing:0.05em;margin-bottom:2rem}
+.hero-tag::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+h1.hero-name{font-size:clamp(3.5rem,8vw,7rem);font-weight:800;line-height:0.95;letter-spacing:-0.03em;margin-bottom:1.5rem;color:var(--text)}
+h1.hero-name .accent{color:var(--accent)}
+.hero-desc{font-family:var(--font-mono);font-size:0.9rem;color:var(--muted);max-width:520px;line-height:1.8;margin-bottom:2.5rem;font-weight:300}
+.hero-desc strong{color:var(--text);font-weight:400}
+.hero-actions{display:flex;gap:1rem;align-items:center}
+.btn-primary{background:var(--accent);color:#0a0a0a;padding:0.75rem 2rem;font-family:var(--font-head);font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:0.5rem}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-2px)}
+.btn-secondary{color:var(--muted);padding:0.75rem 2rem;font-family:var(--font-head);font-size:0.8rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:1px solid var(--border2);transition:all 0.2s}
+.btn-secondary:hover{border-color:var(--muted);color:var(--text)}
+.hero-stats{display:flex;gap:3rem;margin-top:5rem;padding-top:3rem;border-top:1px solid var(--border)}
+.stat-num{font-size:2rem;font-weight:800;color:var(--accent);display:block;line-height:1}
+.stat-label{font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);margin-top:0.4rem;display:block;letter-spacing:0.05em}
+
+/* SECTION LABEL */
+.section-label{display:flex;align-items:center;gap:1rem;margin-bottom:3.5rem}
+.section-label span{font-family:var(--font-mono);font-size:0.7rem;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ABOUT */
+#about{background:var(--bg2)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.about-text h2{font-size:clamp(2rem,4vw,3.2rem);font-weight:800;line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem}
+.about-text h2 .line2{color:var(--accent)}
+.about-text p{font-family:var(--font-mono);font-size:0.85rem;color:var(--muted);line-height:1.9;font-weight:300;margin-bottom:1rem}
+.about-right{display:flex;flex-direction:column;gap:1rem}
+.about-card{background:var(--bg3);border:1px solid var(--border);padding:1.5rem;transition:border-color 0.2s}
+.about-card:hover{border-color:var(--border2)}
+.about-card-icon{font-family:var(--font-mono);font-size:0.65rem;color:var(--accent);letter-spacing:0.1em;margin-bottom:0.75rem;text-transform:uppercase}
+.about-card h4{font-size:0.95rem;font-weight:600;margin-bottom:0.4rem;letter-spacing:-0.01em}
+.about-card p{font-family:var(--font-mono);font-size:0.78rem;color:var(--muted);line-height:1.7;font-weight:300}
+
+/* STACK */
+#stack{background:var(--bg)}
+.stack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:1px;background:var(--border)}
+.stack-item{background:var(--bg);padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:0.75rem;transition:background 0.2s;cursor:default}
+.stack-item:hover{background:var(--bg3)}
+.stack-icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center}
+.stack-icon svg{width:28px;height:28px}
+.stack-name{font-family:var(--font-mono);font-size:0.72rem;color:var(--muted);letter-spacing:0.05em;text-align:center}
+.stack-name.active{color:var(--text)}
+
+/* PROJECTS */
+#projects{background:var(--bg2)}
+.projects-list{display:flex;flex-direction:column;gap:0}
+.project-item{display:grid;grid-template-columns:auto 1fr auto;gap:2rem;align-items:start;padding:2rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all 0.2s;position:relative}
+.project-item:first-child{border-top:1px solid var(--border)}
+.project-item:hover .project-title{color:var(--accent)}
+.project-num{font-family:var(--font-mono);font-size:0.7rem;color:var(--muted2);padding-top:0.2rem;min-width:2.5rem}
+.project-body{}
+.project-tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.75rem}
+.tag{font-family:var(--font-mono);font-size:0.65rem;color:var(--muted);background:var(--bg3);border:1px solid var(--border);padding:0.2rem 0.6rem;letter-spacing:0.05em}
+.project-title{font-size:1.4rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:0.5rem;transition:color 0.2s}
+.project-desc{font-family:var(--font-mono);font-size:0.8rem;color:var(--muted);line-height:1.75;font-weight:300;max-width:600px}
+.project-arrow{font-size:1.2rem;color:var(--muted2);padding-top:0.5rem;transition:all 0.2s;transform:rotate(-45deg)}
+.project-item:hover .project-arrow{color:var(--accent);transform:rotate(0deg)}
+
+/* CONTACT */
+#contact{background:var(--bg);text-align:center;padding:10rem 3rem}
+.contact-label{font-family:var(--font-mono);font-size:0.72rem;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:1.5rem}
+.contact-heading{font-size:clamp(3rem,7vw,6rem);font-weight:800;letter-spacing:-0.03em;line-height:0.95;margin-bottom:2rem}
+.contact-heading span{color:var(--accent)}
+.contact-sub{font-family:var(--font-mono);font-size:0.85rem;color:var(--muted);max-width:420px;margin:0 auto 3rem;line-height:1.8;font-weight:300}
+.contact-links{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap}
+.contact-link{font-family:var(--font-mono);font-size:0.8rem;color:var(--muted);text-decoration:none;letter-spacing:0.05em;padding:0.65rem 1.5rem;border:1px solid var(--border2);transition:all 0.2s}
+.contact-link:hover{color:var(--text);border-color:var(--muted)}
+.contact-email{font-size:0.85rem;color:var(--accent);text-decoration:none;font-family:var(--font-mono);display:inline-block;margin-bottom:2.5rem;letter-spacing:0.03em;border-bottom:1px solid var(--accent);padding-bottom:2px;transition:opacity 0.2s}
+.contact-email:hover{opacity:0.7}
+
+footer{border-top:1px solid var(--border);padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center}
+.footer-copy{font-family:var(--font-mono);font-size:0.72rem;color:var(--muted2);letter-spacing:0.05em}
+.footer-mark{font-family:var(--font-mono);font-size:0.72rem;color:var(--muted2);letter-spacing:0.05em}
+.footer-mark span{color:var(--accent)}
+
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease}
+.fade-in.visible{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">SS<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="mailto:saksham@example.com" class="nav-cta">Hire Me</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="container hero-content fade-in">
+    <div class="hero-tag">Available for work &amp; collaboration</div>
+    <h1 class="hero-name">Saksham<br><span class="accent">Srivastava</span></h1>
+    <p class="hero-desc">
+      Full-Stack Developer &amp; AI Builder.<br>
+      I build <strong>high-performance digital products</strong> — combining frontend engineering, backend systems, and AI-driven workflows.
+    </p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn-primary">View Projects ↓</a>
+      <a href="#contact" class="btn-secondary">Get In Touch</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <span class="stat-num">5+</span>
+        <span class="stat-label">Live Projects</span>
+      </div>
+      <div>
+        <span class="stat-num">3+</span>
+        <span class="stat-label">AI Systems Built</span>
+      </div>
+      <div>
+        <span class="stat-num">2nd Yr</span>
+        <span class="stat-label">BCA @ VIPS Delhi</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="section-label"><span>// 01 — About</span></div>
+    <div class="about-grid fade-in">
+      <div class="about-text">
+        <h2>Builder.<br><span class="line2">Not just a dev.</span></h2>
+        <p>BCA 2nd year at Vivekanand Institute of Professional Studies, New Delhi. I don't wait to finish a degree to build real things.</p>
+        <p>My focus is production-level systems — AI-powered applications, automation workflows, and scalable web platforms. I'm also building Rizara, a digital-first product brand.</p>
+        <p>Discipline drives output. 6-day gym routine, structured learning, no fluff — same mindset in code.</p>
+      </div>
+      <div class="about-right">
+        <div class="about-card">
+          <div class="about-card-icon">→ Specialization</div>
+          <h4>Full-Stack Engineering</h4>
+          <p>React, Next.js, Node.js, Express. Frontend architecture to backend systems — end to end.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-card-icon">→ Focus</div>
+          <h4>AI Integration</h4>
+          <p>Self-hosted LLMs via Ollama, AI workflows, automation pipelines. Building AI into real products.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-card-icon">→ Also Building</div>
+          <h4>Rizara Brand</h4>
+          <p>Early-stage digital-first product brand. E-commerce focused. Building the infrastructure while still in college.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="container">
+    <div class="section-label"><span>// 02 — Tech Stack</span></div>
+    <div class="stack-grid fade-in">
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="2.5" fill="#61dafb"/><path d="M12 5.08c-3.87 0-7.4.98-10.02 2.6C-.54 9.3-1.2 11.24-.54 12.92c.66 1.68 2.88 2.76 6.08 3.02" stroke="#61dafb" stroke-width="1.2" fill="none"/><ellipse cx="12" cy="12" rx="11" ry="4.5" stroke="#61dafb" stroke-width="1.2" fill="none" transform="rotate(0)"/><ellipse cx="12" cy="12" rx="11" ry="4.5" stroke="#61dafb" stroke-width="1.2" fill="none" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="11" ry="4.5" stroke="#61dafb" stroke-width="1.2" fill="none" transform="rotate(120 12 12)"/></svg>
+        </div>
+        <span class="stack-name active">React</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="2" fill="#000"/><path d="M7 7h5v5H7zM12 12h5v5h-5z" fill="#fff"/><path d="M7 12h5v5H7z" fill="#888"/></svg>
+        </div>
+        <span class="stack-name active">Next.js</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#e8ff47" stroke-width="1.5" stroke-linejoin="round" fill="none"/></svg>
+        </div>
+        <span class="stack-name active">Node.js</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#68a063" stroke-width="1.5" fill="none"/><path d="M8 12h8M12 8v8" stroke="#68a063" stroke-width="1.5"/></svg>
+        </div>
+        <span class="stack-name active">Express</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9z" stroke="#3ecf8e" stroke-width="1.5" fill="none"/><path d="M8 12s1 2 4 2 4-2 4-2" stroke="#3ecf8e" stroke-width="1.5" fill="none"/><circle cx="12" cy="9" r="1.5" fill="#3ecf8e"/></svg>
+        </div>
+        <span class="stack-name active">Supabase</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="7" rx="9" ry="3.5" stroke="#336791" stroke-width="1.5" fill="none"/><path d="M3 7v5c0 1.93 4.03 3.5 9 3.5s9-1.57 9-3.5V7" stroke="#336791" stroke-width="1.5" fill="none"/><path d="M3 12v5c0 1.93 4.03 3.5 9 3.5s9-1.57 9-3.5v-5" stroke="#336791" stroke-width="1.5" fill="none"/></svg>
+        </div>
+        <span class="stack-name active">PostgreSQL</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <span class="stack-name active">Tailwind</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#ff6b35" stroke-width="1.5" fill="none"/><path d="M9 9l6 3-6 3V9z" fill="#ff6b35"/></svg>
+        </div>
+        <span class="stack-name">Ollama / LLMs</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v10l9 5 9-5V7L12 2z" stroke="#f0ede6" stroke-width="1.5" fill="none"/></svg>
+        </div>
+        <span class="stack-name">Git / GitHub</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#999" stroke-width="1.5" fill="none"/><path d="M7 12l3 3 7-7" stroke="#999" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <span class="stack-name">Airtable</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#f6821f" stroke-width="1.5" fill="none"/><path d="M12 7v5l3 3" stroke="#f6821f" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <span class="stack-name">Cloudflare</span>
+      </div>
+      <div class="stack-item">
+        <div class="stack-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l9 4.5V12l-9 4.5L3 12V7.5L12 3z" stroke="#a855f7" stroke-width="1.5" fill="none"/><path d="M3 12l9 4.5 9-4.5" stroke="#a855f7" stroke-width="1.5" fill="none"/></svg>
+        </div>
+        <span class="stack-name">Relay.app</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="container">
+    <div class="section-label"><span>// 03 — Projects</span></div>
+    <div class="projects-list fade-in">
+
+      <div class="project-item">
+        <span class="project-num">01</span>
+        <div class="project-body">
+          <div class="project-tags">
+            <span class="tag">React</span>
+            <span class="tag">Relay.app</span>
+            <span class="tag">Airtable</span>
+            <span class="tag">AI Workflow</span>
+          </div>
+          <div class="project-title">Roadmap Generator</div>
+          <p class="project-desc">AI-powered application that generates structured learning and execution roadmaps. Frontend in React, backend via Relay.app playbooks triggered through webhooks, data persisted in Airtable.</p>
+        </div>
+        <span class="project-arrow">↗</span>
+      </div>
+
+      <div class="project-item">
+        <span class="project-num">02</span>
+        <div class="project-body">
+          <div class="project-tags">
+            <span class="tag">React</span>
+            <span class="tag">Ollama</span>
+            <span class="tag">Self-hosted LLM</span>
+            <span class="tag">AI</span>
+          </div>
+          <div class="project-title">Custom AI Chatbot System</div>
+          <p class="project-desc">Self-hosted LLM chatbot integrated directly into a React interface. Runs on-site without third-party redirection. Designed for deployment inside web products as a native AI layer.</p>
+        </div>
+        <span class="project-arrow">↗</span>
+      </div>
+
+      <div class="project-item">
+        <span class="project-num">03</span>
+        <div class="project-body">
+          <div class="project-tags">
+            <span class="tag">React</span>
+            <span class="tag">Tailwind CSS</span>
+            <span class="tag">GitHub</span>
+            <span class="tag">SEO</span>
+          </div>
+          <div class="project-title">Company Website</div>
+          <p class="project-desc">Production company website built in React + Tailwind. Hosted on GitHub. Currently optimizing for SEO performance without a custom domain — focusing on technical SEO fundamentals.</p>
+        </div>
+        <span class="project-arrow">↗</span>
+      </div>
+
+      <div class="project-item">
+        <span class="project-num">04</span>
+        <div class="project-body">
+          <div class="project-tags">
+            <span class="tag">Python</span>
+            <span class="tag">Cloudflare</span>
+            <span class="tag">Android TV</span>
+            <span class="tag">AR</span>
+          </div>
+          <div class="project-title">Python AR Pose System</div>
+          <p class="project-desc">Combined Python system with server, pose AR, and viewer components. Uses Cloudflare tunnel to expose the server publicly. Target device: Android TV. Real-time pose tracking pipeline.</p>
+        </div>
+        <span class="project-arrow">↗</span>
+      </div>
+
+      <div class="project-item">
+        <span class="project-num">05</span>
+        <div class="project-body">
+          <div class="project-tags">
+            <span class="tag">Brand</span>
+            <span class="tag">E-Commerce</span>
+            <span class="tag">Digital-First</span>
+          </div>
+          <div class="project-title">Rizara — Product Brand</div>
+          <p class="project-desc">Early-stage digital-first product brand. Building the e-commerce infrastructure and brand identity from the ground up. Scalable, digital-native from day one.</p>
+        </div>
+        <span class="project-arrow">↗</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <div class="contact-label">// 04 — Contact</div>
+    <h2 class="contact-heading fade-in">Let's build<br><span>something.</span></h2>
+    <p class="contact-sub">Open to freelance, collaboration, and full-time opportunities. If you're building something serious, let's talk.</p>
+    <a href="mailto:saksham@example.com" class="contact-email">saksham@example.com</a>
+    <div class="contact-links">
+      <a href="#" class="contact-link">GitHub →</a>
+      <a href="#" class="contact-link">LinkedIn →</a>
+      <a href="#" class="contact-link">Resume ↓</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-copy">© 2025 Saksham Srivastava</span>
+  <span class="footer-mark">Built with <span>precision</span>.</span>
+</footer>
+
+<script>
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=(mx-4)+'px';cursor.style.top=(my-4)+'px';
+});
+function animRing(){
+  rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+  ring.style.left=(rx-16)+'px';ring.style.top=(ry-16)+'px';
+  requestAnimationFrame(animRing);
+}animRing();
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>40);
+});
+
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+document.querySelectorAll('.project-item').forEach(item=>{
+  item.addEventListener('mouseenter',()=>{item.querySelector('.project-arrow').style.color='var(--accent)'});
+  item.addEventListener('mouseleave',()=>{item.querySelector('.project-arrow').style.color='var(--muted2)'});
+});
+
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth'});
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+export const STACK = [
+  { name: 'React',      category: 'Frontend'  },
+  { name: 'Next.js',    category: 'Frontend'  },
+  { name: 'Tailwind',   category: 'Frontend'  },
+  { name: 'GSAP',       category: 'Frontend'  },
+  { name: 'Node.js',    category: 'Backend'   },
+  { name: 'Express',    category: 'Backend'   },
+  { name: 'Supabase',   category: 'Backend'   },
+  { name: 'PostgreSQL', category: 'Backend'   },
+  { name: 'Python',     category: 'Systems'   },
+  { name: 'Ollama',     category: 'AI'        },
+  { name: 'Relay.app',  category: 'AI'        },
+  { name: 'Cloudflare', category: 'Infra'     },
+  { name: 'Airtable',   category: 'Data'      },
+  { name: 'Git',        category: 'Tooling'   },
+  { name: 'Vite',       category: 'Tooling'   },
+]
