@@ -5,7 +5,18 @@
  * Primary visual: first screenshot from the project's asset folder.
  * Falls back to a styled placeholder if no screenshots are present.
  *
- * All project data comes from props — nothing hardcoded.
+ * Equal-height fix:
+ *   The grid cell itself must stretch the card to full height. This requires:
+ *     1. The outer wrapper div in ProjectsPage uses `align-items: stretch`
+ *        (CSS Grid default — so no change needed there).
+ *     2. THIS component's root element must be `height: 100%` so it fills
+ *        the full cell height regardless of content.
+ *     3. The card body uses `flex: 1` on the tagline paragraph so the footer
+ *        is always pinned to the bottom — giving visual alignment across cards
+ *        in the same row even when title/tagline lengths differ.
+ *
+ * NOTE: data-gsap="fade-up" intentionally absent from root.
+ * See ProjectsPage.jsx for explanation.
  */
 
 import { useState, useRef } from 'react'
@@ -13,20 +24,17 @@ import { Link } from 'react-router-dom'
 import Tag from '@components/ui/Tag'
 import { useProjectAssets } from '@hooks/useProjectAssets'
 
-// ─── Image placeholder ───────────────────────────────────────────────────────
+// ─── Image placeholder ────────────────────────────────────────────────────────
 function CardImagePlaceholder({ project }) {
   return (
-    <div
-      style={{
-        position:   'absolute',
-        inset:      0,
-        display:    'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: `linear-gradient(135deg, ${project.accentColor ?? 'rgba(71,49,152,0.15)'} 0%, rgba(8,8,8,0) 100%)`,
-      }}
-    >
-      {/* Watermark index */}
+    <div style={{
+      position:       'absolute',
+      inset:          0,
+      display:        'flex',
+      alignItems:     'center',
+      justifyContent: 'center',
+      background:     `linear-gradient(135deg, ${project.accentColor ?? 'rgba(71,49,152,0.15)'} 0%, rgba(8,8,8,0) 100%)`,
+    }}>
       <span style={{
         fontFamily:       'var(--font-display)',
         fontSize:         'clamp(5rem, 12vw, 9rem)',
@@ -43,25 +51,22 @@ function CardImagePlaceholder({ project }) {
   )
 }
 
-// ─── Main card ───────────────────────────────────────────────────────────────
+// ─── Card ─────────────────────────────────────────────────────────────────────
 export default function ProjectCard({ project, index = 0 }) {
   const cardRef  = useRef(null)
   const glowRef  = useRef(null)
-  const [hovered, setHovered] = useState(false)
+  const [hovered,  setHovered]  = useState(false)
   const [imgError, setImgError] = useState(false)
 
   const { screenshots } = useProjectAssets(project.slug)
   const coverImage = screenshots[0]?.url ?? null
 
-  // ── 3-D tilt
   const onMouseMove = (e) => {
     const rect = cardRef.current.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width
     const y = (e.clientY - rect.top)  / rect.height
-    const rotX = (y - 0.5) * -7
-    const rotY = (x - 0.5) *  7
     cardRef.current.style.transform =
-      `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`
+      `perspective(900px) rotateX(${(y - 0.5) * -7}deg) rotateY(${(x - 0.5) * 7}deg) translateY(-4px)`
     if (glowRef.current) {
       glowRef.current.style.left = `${x * 100}%`
       glowRef.current.style.top  = `${y * 100}%`
@@ -80,13 +85,15 @@ export default function ProjectCard({ project, index = 0 }) {
     <Link
       ref={cardRef}
       to={`/projects/${project.slug}`}
-      data-gsap="fade-up"
       onMouseMove={onMouseMove}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={onMouseLeave}
       style={{
+        // ── Equal-height key: fill the full grid cell height ──────────────
         display:        'flex',
         flexDirection:  'column',
+        height:         '100%',
+        // ─────────────────────────────────────────────────────────────────
         background:     hovered ? 'rgba(255,255,255,0.028)' : 'var(--bg-2)',
         border:         `1px solid ${hovered ? 'rgba(255,255,255,0.09)' : 'var(--border)'}`,
         textDecoration: 'none',
@@ -98,10 +105,9 @@ export default function ProjectCard({ project, index = 0 }) {
           ? `0 28px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px ${accent}`
           : '0 2px 12px rgba(0,0,0,0.18)',
         willChange:     'transform',
-        animationDelay: `${index * 0.07}s`,
       }}
     >
-      {/* ── Mouse-following radial glow ── */}
+      {/* Radial glow */}
       <div
         ref={glowRef}
         aria-hidden="true"
@@ -119,7 +125,7 @@ export default function ProjectCard({ project, index = 0 }) {
         }}
       />
 
-      {/* ── Left accent strip ── */}
+      {/* Left accent strip */}
       <div
         aria-hidden="true"
         style={{
@@ -128,20 +134,20 @@ export default function ProjectCard({ project, index = 0 }) {
           left:       0,
           width:      '2px',
           height:     hovered ? '100%' : '0%',
-          background: `linear-gradient(180deg, transparent 0%, ${accent.replace('0.', '0.8').replace('rgba(', 'rgba(').replace(/,[^,)]+\)/, ', 0.7)')} 50%, transparent 100%)`,
+          background: `linear-gradient(180deg, transparent 0%, ${accent.replace(/[\d.]+\)$/, '0.7)')} 50%, transparent 100%)`,
           transition: 'height 0.55s cubic-bezier(0.19,1,0.22,1)',
           zIndex:     1,
         }}
       />
 
-      {/* ── Screenshot hero image ── */}
+      {/* Screenshot — fixed aspect ratio, never grows */}
       <div style={{
         position:   'relative',
         width:      '100%',
         aspectRatio:'16/9',
         overflow:   'hidden',
         background: 'var(--bg-3)',
-        flexShrink: 0,
+        flexShrink: 0,   // ← never shrink the image area
       }}>
         {coverImage && !imgError ? (
           <>
@@ -150,36 +156,27 @@ export default function ProjectCard({ project, index = 0 }) {
               alt={`${project.title} screenshot`}
               onError={() => setImgError(true)}
               style={{
-                width:      '100%',
-                height:     '100%',
-                objectFit:  'cover',
+                width:          '100%',
+                height:         '100%',
+                objectFit:      'cover',
                 objectPosition: 'top center',
-                display:    'block',
-                transition: 'transform 0.55s cubic-bezier(0.19,1,0.22,1), filter 0.35s ease',
-                transform:  hovered ? 'scale(1.04)' : 'scale(1)',
-                filter:     hovered ? 'brightness(0.85)' : 'brightness(0.72) saturate(0.9)',
+                display:        'block',
+                transition:     'transform 0.55s cubic-bezier(0.19,1,0.22,1), filter 0.35s ease',
+                transform:      hovered ? 'scale(1.04)' : 'scale(1)',
+                filter:         hovered ? 'brightness(0.85)' : 'brightness(0.72) saturate(0.9)',
               }}
             />
-            {/* Overlay gradient — always present, intensifies on hover */}
             <div style={{
               position:   'absolute',
               inset:      0,
-              background: `linear-gradient(
-                180deg,
-                transparent 0%,
-                rgba(8,8,8,0.2) 60%,
-                rgba(8,8,8,0.85) 100%
-              )`,
-              transition: 'opacity 0.3s ease',
+              background: `linear-gradient(180deg, transparent 0%, rgba(8,8,8,0.2) 60%, rgba(8,8,8,0.85) 100%)`,
             }} />
-            {/* Hover: accent wash */}
             {hovered && (
               <div style={{
-                position:   'absolute',
-                inset:      0,
-                background: accent,
+                position:    'absolute',
+                inset:       0,
+                background:  accent,
                 mixBlendMode:'multiply',
-                transition: 'opacity 0.3s ease',
               }} />
             )}
           </>
@@ -187,7 +184,6 @@ export default function ProjectCard({ project, index = 0 }) {
           <CardImagePlaceholder project={project} />
         )}
 
-        {/* Screenshot count badge */}
         {screenshots.length > 1 && (
           <div style={{
             position:      'absolute',
@@ -207,7 +203,6 @@ export default function ProjectCard({ project, index = 0 }) {
           </div>
         )}
 
-        {/* Project ID watermark on image */}
         <div style={{
           position:      'absolute',
           top:           '0.75rem',
@@ -222,18 +217,16 @@ export default function ProjectCard({ project, index = 0 }) {
         </div>
       </div>
 
-      {/* ── Card body ── */}
+      {/* Card body — flex:1 so it fills remaining height */}
       <div style={{
         position:      'relative',
         zIndex:        1,
         display:       'flex',
         flexDirection: 'column',
-        flex:          1,
+        flex:          1,          // ← grows to fill remaining cell height
         padding:       '1.5rem',
-        gap:           '0',
       }}>
-
-        {/* Tags row */}
+        {/* Tags */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginBottom: '0.9rem' }}>
           {project.tags.slice(0, 3).map(tag => (
             <Tag key={tag}>{tag}</Tag>
@@ -252,24 +245,23 @@ export default function ProjectCard({ project, index = 0 }) {
           lineHeight:    1,
           color:         'var(--text)',
           marginBottom:  '0.65rem',
-          transition:    'color 0.25s ease',
         }}>
           {project.title}
         </h3>
 
-        {/* Tagline */}
+        {/* Tagline — flex:1 pushes footer to bottom */}
         <p style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize:   '0.68rem',
-          color:      'var(--muted)',
-          lineHeight: 1.85,
-          flex:       1,
-          marginBottom:'1.25rem',
+          fontFamily:   'var(--font-mono)',
+          fontSize:     '0.68rem',
+          color:        'var(--muted)',
+          lineHeight:   1.85,
+          flex:         1,           // ← stretches so footer is always at bottom
+          marginBottom: '1.25rem',
         }}>
           {project.tagline}
         </p>
 
-        {/* Footer */}
+        {/* Footer — always pinned to bottom of card */}
         <div style={{
           display:        'flex',
           justifyContent: 'space-between',
@@ -277,6 +269,7 @@ export default function ProjectCard({ project, index = 0 }) {
           paddingTop:     '1rem',
           borderTop:      `1px solid ${hovered ? 'rgba(255,255,255,0.07)' : 'var(--border)'}`,
           transition:     'border-color 0.3s ease',
+          marginTop:      'auto',    // extra safety — always at bottom
         }}>
           <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center' }}>
             <Tag variant={project.status === 'Live' ? 'live' : 'default'}>
