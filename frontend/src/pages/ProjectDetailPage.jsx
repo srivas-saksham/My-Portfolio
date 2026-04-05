@@ -455,7 +455,7 @@ function NextProject({ current }) {
           <div>
             <span style={{
               fontFamily:    'var(--font-mono)',
-              fontSize:      '0.55rem',
+              fontSize:      '0.85rem',
               color:         'var(--ghost)',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',

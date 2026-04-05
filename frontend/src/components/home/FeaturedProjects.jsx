@@ -467,7 +467,7 @@ export default function FeaturedProjects() {
           }}
         >
           <div>
-            <SectionLabel index="02" label="Selected Work" />
+            <SectionLabel index="02" label="Featured Work" />
             <p style={{
               fontFamily: 'var(--font-mono)',
               fontSize:   '0.73rem',

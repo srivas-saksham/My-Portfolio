@@ -22,23 +22,23 @@ export const PROJECTS = [
     type:        'Founder & Developer',
     client:      null,
     status:      'Live',
-    year:        '2025',
+    year:        '2026',
     live:        'https://www.rizara.in/',
     github:      'https://github.com/srivas-saksham/The-Petal-Pouches',
     // media
     hasVideo:    true,   // expects src/assets/videos/rizara-luxe.mp4
-    accentColor: 'rgba(212, 55, 175, 0.15)',   // pink tint
+    accentColor: 'rgba(212, 55, 126, 0.15)',   // pink tint
   },
   {
     id:          '02',
     slug:        'vyan-security',
-    title:       'Vyan Security',
+    title:       'Vyaan Security',
     tagline:     'Client web platform for a professional security services firm.',
-    description: 'Modern, responsive website for Vyan Security — a professional guard services company operating across India. Integrated an AI-powered assistant for instant client support and an email-based query system for direct communication. Highlights certified personnel, real-world threat training, and flexible security solutions for events, businesses, and residences.',
+    description: 'Modern, responsive website for Vyaan Security — a professional guard services company operating across India. Integrated an AI-powered assistant for instant client support and an email-based query system for direct communication. Highlights certified personnel, real-world threat training, and flexible security solutions for events, businesses, and residences.',
     tags:        ['React', 'Chatbot Integration', 'Client Project', 'Email System'],
     stack:       ['React', 'Tailwind CSS', 'AI Chatbot', 'Email API'],
     type:        'Client Project',
-    client:      'Vyan Security',
+    client:      'Vyaan Security',
     status:      'Live',
     year:        '2025',
     live:        'https://vyan-security.vercel.app/',
@@ -61,7 +61,7 @@ export const PROJECTS = [
     live:        'https://docslayer.vercel.app/',
     github:      'https://github.com/srivas-saksham/DocSlayer',
     hasVideo:    true,
-    accentColor: 'rgba(241, 184, 99, 0.12)',   // indigo
+    accentColor: 'rgba(255, 242, 221, 0.12)',   // brown
   },
   {
     id:          '04',

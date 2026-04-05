@@ -7,11 +7,32 @@ export default function Footer() {
   return (
     <footer style={{
       position:   'relative',
-      background: 'var(--bg-1)',
-      borderTop:  '1px solid var(--border)',
+      background: '#2a1d5e',
+      borderTop:  '1px solid rgba(255,255,255,0.08)',
       overflow:   'hidden',
     }}>
-      {/* Subtle background glow */}
+      {/* Deep indigo gradient overlay for depth */}
+      <div style={{
+        position:      'absolute',
+        inset:         0,
+        background:    'linear-gradient(135deg, #1e1248 0%, #2a1d5e 40%, #1a1040 100%)',
+        pointerEvents: 'none',
+        zIndex:        0,
+      }} />
+
+      {/* Top-right glow accent */}
+      <div style={{
+        position:      'absolute',
+        top:           '-20%',
+        right:         '-5%',
+        width:         '45vw',
+        height:        '45vw',
+        background:    'radial-gradient(ellipse, rgba(138,100,255,0.18) 0%, transparent 65%)',
+        pointerEvents: 'none',
+        zIndex:        0,
+      }} />
+
+      {/* Bottom-left glow accent */}
       <div style={{
         position:      'absolute',
         bottom:        '-30%',
@@ -19,8 +40,9 @@ export default function Footer() {
         transform:     'translateX(-50%)',
         width:         '60vw',
         height:        '30vw',
-        background:    'radial-gradient(ellipse, rgba(71,49,152,0.08) 0%, transparent 70%)',
+        background:    'radial-gradient(ellipse, rgba(71,49,152,0.25) 0%, transparent 70%)',
         pointerEvents: 'none',
+        zIndex:        0,
       }} />
 
       <div style={{
@@ -39,7 +61,7 @@ export default function Footer() {
           flexWrap:       'wrap',
           gap:            '3rem',
           paddingBottom:  '3rem',
-          borderBottom:   '1px solid var(--border)',
+          borderBottom:   '1px solid rgba(255,255,255,0.1)',
           marginBottom:   '2rem',
         }}>
 
@@ -51,7 +73,7 @@ export default function Footer() {
               fontWeight:    600,
               letterSpacing: '-0.04em',
               lineHeight:    0.9,
-              color:         'var(--text)',
+              color:         '#ffffff',
               marginBottom:  '1.25rem',
             }}>
               Let's build<br />
@@ -59,7 +81,7 @@ export default function Footer() {
                 fontStyle:        'italic',
                 fontWeight:       300,
                 color:            'transparent',
-                WebkitTextStroke: '1px rgba(245,245,245,0.3)',
+                WebkitTextStroke: '1px rgba(255,255,255,0.45)',
               }}>
                 together.
               </span>
@@ -67,7 +89,7 @@ export default function Footer() {
             <p style={{
               fontFamily: 'var(--font-mono)',
               fontSize:   '0.72rem',
-              color:      'var(--muted)',
+              color:      'rgba(255,255,255,0.55)',
               lineHeight: 1.9,
             }}>
               Open to freelance, collaboration,<br />and serious opportunities.
@@ -81,14 +103,20 @@ export default function Footer() {
                 marginTop:     '1.5rem',
                 fontFamily:    'var(--font-mono)',
                 fontSize:      '0.72rem',
-                color:         'var(--text)',
+                color:         '#ffffff',
                 textDecoration:'none',
-                borderBottom:  '1px solid rgba(71,49,152,0.4)',
+                borderBottom:  '1px solid rgba(255,255,255,0.3)',
                 paddingBottom: '2px',
-                transition:    'border-color 0.2s ease',
+                transition:    'border-color 0.2s ease, color 0.2s ease',
               }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--indigo)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(71,49,152,0.4)'}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.9)'
+                e.currentTarget.style.color = 'rgba(255,255,255,0.9)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
+                e.currentTarget.style.color = '#ffffff'
+              }}
             >
               {SITE.email} →
             </a>
@@ -105,7 +133,7 @@ export default function Footer() {
                 display:       'block',
                 fontFamily:    'var(--font-mono)',
                 fontSize:      '0.58rem',
-                color:         'var(--muted)',
+                color:         'rgba(255,255,255,0.35)',
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 marginBottom:  '1.25rem',
@@ -120,13 +148,13 @@ export default function Footer() {
                     style={{
                       fontFamily:     'var(--font-mono)',
                       fontSize:       '0.72rem',
-                      color:          'var(--muted)',
+                      color:          'rgba(255,255,255,0.55)',
                       textDecoration: 'none',
                       transition:     'color 0.2s ease',
                       letterSpacing:  '0.04em',
                     }}
-                    onMouseEnter={e => e.currentTarget.style.color = 'var(--text)'}
-                    onMouseLeave={e => e.currentTarget.style.color = 'var(--muted)'}
+                    onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
                   >
                     {link.label}
                   </Link>
@@ -139,7 +167,7 @@ export default function Footer() {
                 display:       'block',
                 fontFamily:    'var(--font-mono)',
                 fontSize:      '0.58rem',
-                color:         'var(--muted)',
+                color:         'rgba(255,255,255,0.35)',
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
                 marginBottom:  '1.25rem',
@@ -160,13 +188,13 @@ export default function Footer() {
                     style={{
                       fontFamily:     'var(--font-mono)',
                       fontSize:       '0.72rem',
-                      color:          'var(--muted)',
+                      color:          'rgba(255,255,255,0.55)',
                       textDecoration: 'none',
                       transition:     'color 0.2s ease',
                       letterSpacing:  '0.04em',
                     }}
-                    onMouseEnter={e => e.currentTarget.style.color = 'var(--text)'}
-                    onMouseLeave={e => e.currentTarget.style.color = 'var(--muted)'}
+                    onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
                   >
                     {link.label} ↗
                   </a>
@@ -187,7 +215,7 @@ export default function Footer() {
           <span style={{
             fontFamily:    'var(--font-mono)',
             fontSize:      '0.63rem',
-            color:         'var(--ghost)',
+            color:         'rgba(255,255,255,0.3)',
             letterSpacing: '0.06em',
           }}>
             © {year} Saksham Srivastava — All rights reserved
@@ -195,11 +223,11 @@ export default function Footer() {
           <span style={{
             fontFamily:    'var(--font-mono)',
             fontSize:      '0.63rem',
-            color:         'var(--ghost)',
+            color:         'rgba(255,255,255,0.3)',
             letterSpacing: '0.06em',
           }}>
             Built with{' '}
-            <span style={{ color: 'var(--indigo)', opacity: 0.8 }}>precision</span>
+            <span style={{ color: 'rgba(178,151,255,0.9)' }}>precision</span>
             {' '}— New Delhi, India
           </span>
         </div>
