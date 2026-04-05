@@ -24,8 +24,20 @@ function ScrollReset() {
   const location = useLocation()
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    // Kill all existing triggers first
     ScrollTrigger.getAll().forEach(t => t.kill())
+
+    // Force scroll to top — instant to win against ScrollTrigger
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+
+    // Double-tap on next frame to catch any late fighters
+    const id = requestAnimationFrame(() => {
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+    })
+
+    return () => cancelAnimationFrame(id)
   }, [location.pathname])
 
   return null

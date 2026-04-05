@@ -237,13 +237,15 @@ export default function ProjectLivePreview({ url, title }) {
           onLoad={() => setLoading(false)}
           onError={() => { setLoading(false); setErrored(true) }}
           style={{
-            width:          '100%',
-            height:         '100%',
-            border:         'none',
-            display:        'block',
-            opacity:        loading || errored ? 0 : 1,
-            transition:     'opacity 0.5s ease',
-            pointerEvents:  'auto',
+            width:           '133%',
+            height:          '133%',
+            border:          'none',
+            display:         'block',
+            opacity:         loading || errored ? 0 : 1,
+            transition:      'opacity 0.5s ease',
+            pointerEvents:   'auto',
+            transform:       'scale(0.75)',
+            transformOrigin: 'top left',
           }}
           // Best-effort: sandbox still allows scripts + same-origin but no pop-ups
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups-to-escape-sandbox"

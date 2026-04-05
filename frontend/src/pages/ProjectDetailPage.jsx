@@ -4,29 +4,29 @@
  * Full project detail view. Sections rendered conditionally based on data:
  *
  *   01 — Hero             (always)
- *   02 — Screenshots      (if screenshots.length > 0)
+ *   02 — Screenshots      (if screenshots.length > 0)   ← SceneBackground ON
  *   03 — Video Demo       (if project.hasVideo && videoSrc exists)
  *   04 — Live Preview     (if project.live !== null)
  *   05 — Technical Detail (always — stack, description, tags)
- *   06 — Next Project     (always)
+ *   06 — Next Project     (always)                       ← SceneBackground ON
  *
- * SceneBackground alternates: dark bg-base sections get it, bg-1 sections skip it.
+ * SceneBackground: ONLY on Screenshots and Next Project sections.
  * Accent colours from project data bleed into borders, glows, and decorators.
  */
 
 import { useParams, Link } from 'react-router-dom'
-import PageWrapper            from '@components/layout/PageWrapper'
-import SEO                   from '@components/seo/SEO'
-import Button                from '@components/ui/Button'
-import Tag                   from '@components/ui/Tag'
-import SectionLabel          from '@components/ui/SectionLabel'
-import SceneBackground       from '@components/layout/SceneBackground'
+import PageWrapper               from '@components/layout/PageWrapper'
+import SEO                       from '@components/seo/SEO'
+import Button                    from '@components/ui/Button'
+import Tag                       from '@components/ui/Tag'
+import SectionLabel              from '@components/ui/SectionLabel'
+import SceneBackground           from '@components/layout/SceneBackground'
 
-import ProjectDetailHero      from '@components/projects/ProjectDetailHero'
-import ProjectLinks           from '@components/projects/ProjectLinks'
+import ProjectDetailHero         from '@components/projects/ProjectDetailHero'
+import ProjectLinks              from '@components/projects/ProjectLinks'
 import ProjectScreenshotsGallery from '@components/projects/ProjectScreenshotsGallery'
-import ProjectVideoDemo        from '@components/projects/ProjectVideoDemo'
-import ProjectLivePreview      from '@components/projects/ProjectLivePreview'
+import ProjectVideoDemo          from '@components/projects/ProjectVideoDemo'
+import ProjectLivePreview        from '@components/projects/ProjectLivePreview'
 
 import { useProjectAssets } from '@hooks/useProjectAssets'
 import { PROJECTS } from '@data/projects'
@@ -36,18 +36,17 @@ function parseAccent(raw) {
   return raw ?? 'rgba(71,49,152,0.15)'
 }
 
-// ─── Section wrapper with optional SceneBackground ───────────────────────────
-function Section({ children, bg = 'var(--bg-base)', scene = false, sceneProps = {}, style = {}, ...rest }) {
+// ─── Section wrapper — no SceneBackground by default ─────────────────────────
+function Section({ children, bg = 'var(--bg-base)', style = {}, ...rest }) {
   return (
     <section style={{
-      padding:   'clamp(3.5rem, 6vw, 6rem) 2.5rem',
+      padding:    'clamp(3.5rem, 6vw, 6rem) 2.5rem',
       background: bg,
-      borderTop: '1px solid var(--border)',
-      position:  'relative',
-      overflow:  'hidden',
+      borderTop:  '1px solid var(--border)',
+      position:   'relative',
+      overflow:   'hidden',
       ...style,
     }} {...rest}>
-      {scene && <SceneBackground {...sceneProps} />}
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         {children}
       </div>
@@ -55,88 +54,95 @@ function Section({ children, bg = 'var(--bg-base)', scene = false, sceneProps = 
   )
 }
 
-// ─── Screenshots section ──────────────────────────────────────────────────────
+// ─── Screenshots section — SceneBackground ON ─────────────────────────────────
 function ScreenshotsSection({ project, screenshots }) {
   const accent = parseAccent(project.accentColor)
 
   return (
-    <Section
-      bg="var(--bg-base)"
-      scene
-      sceneProps={{
-        gridOpacity:     0.08,
-        glow1Color:      accent.replace(/[\d.]+\)$/, '0.1)'),
-        glow2Color:      'rgba(71,49,152,0.05)',
-        glow1Pos:        { top: '-15%', right: '-5%' },
-        glow2Pos:        { bottom: '0%', left: '-10%' },
-        parallaxStrength: 0.5,
-      }}
-    >
-      <SectionLabel index="02" label="Screenshots" />
+    <section style={{
+      padding:    'clamp(3.5rem, 6vw, 6rem) 2.5rem',
+      background: 'var(--bg-base)',
+      borderTop:  '1px solid var(--border)',
+      position:   'relative',
+      overflow:   'hidden',
+    }}>
+      {/* SceneBackground — only here */}
+      <SceneBackground
+        gridOpacity={0.08}
+        glow1Color={accent.replace(/[\d.]+\)$/, '0.1)')}
+        glow2Color="rgba(71,49,152,0.05)"
+        glow1Pos={{ top: '-15%', right: '-5%' }}
+        glow2Pos={{ bottom: '0%', left: '-10%' }}
+        parallaxStrength={0.5}
+      />
 
-      {/* Count + keyboard hint */}
-      <div
-        data-gsap="fade-up"
-        style={{
-          display:        'flex',
-          alignItems:     'center',
-          justifyContent: 'space-between',
-          marginBottom:   '1.75rem',
-          flexWrap:       'wrap',
-          gap:            '0.75rem',
-          marginTop:      '-2rem',
-        }}
-      >
-        <span style={{
-          fontFamily:    'var(--font-mono)',
-          fontSize:      '0.72rem',
-          color:         'var(--ghost)',
-          letterSpacing: '0.08em',
-        }}>
-          {screenshots.length} screenshot{screenshots.length !== 1 ? 's' : ''} — click to expand fullscreen
-        </span>
-        {screenshots.length > 1 && (
+      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <SectionLabel index="02" label="Screenshots" />
+
+        {/* Count + keyboard hint */}
+        <div
+          data-gsap="fade-up"
+          style={{
+            display:        'flex',
+            alignItems:     'center',
+            justifyContent: 'space-between',
+            marginBottom:   '1.75rem',
+            flexWrap:       'wrap',
+            gap:            '0.75rem',
+            marginTop:      '-2rem',
+          }}
+        >
           <span style={{
             fontFamily:    'var(--font-mono)',
-            fontSize:      '0.75rem',
+            fontSize:      '0.72rem',
             color:         'var(--ghost)',
             letterSpacing: '0.08em',
-            display:       'flex',
-            alignItems:    'center',
-            gap:           '0.4rem',
           }}>
-            <kbd style={{
-              fontFamily:  'var(--font-mono)',
-              fontSize:    '0.72rem',
-              border:      '1px solid var(--border)',
-              padding:     '0.15rem 0.4rem',
-              background:  'var(--bg-2)',
-              color:       'var(--ghost)',
-            }}>←</kbd>
-            <kbd style={{
-              fontFamily:  'var(--font-mono)',
-              fontSize:    '0.82rem',
-              border:      '1px solid var(--border)',
-              padding:     '0.15rem 0.4rem',
-              background:  'var(--bg-2)',
-              color:       'var(--ghost)',
-            }}>→</kbd>
-            Navigate
+            {screenshots.length} screenshot{screenshots.length !== 1 ? 's' : ''} — click to expand fullscreen
           </span>
-        )}
-      </div>
+          {screenshots.length > 1 && (
+            <span style={{
+              fontFamily:    'var(--font-mono)',
+              fontSize:      '0.75rem',
+              color:         'var(--ghost)',
+              letterSpacing: '0.08em',
+              display:       'flex',
+              alignItems:    'center',
+              gap:           '0.4rem',
+            }}>
+              <kbd style={{
+                fontFamily:  'var(--font-mono)',
+                fontSize:    '0.72rem',
+                border:      '1px solid var(--border)',
+                padding:     '0.15rem 0.4rem',
+                background:  'var(--bg-2)',
+                color:       'var(--ghost)',
+              }}>←</kbd>
+              <kbd style={{
+                fontFamily:  'var(--font-mono)',
+                fontSize:    '0.82rem',
+                border:      '1px solid var(--border)',
+                padding:     '0.15rem 0.4rem',
+                background:  'var(--bg-2)',
+                color:       'var(--ghost)',
+              }}>→</kbd>
+              Navigate
+            </span>
+          )}
+        </div>
 
-      <div data-gsap="fade-up">
-        <ProjectScreenshotsGallery
-          screenshots={screenshots}
-          accentColor={project.accentColor}
-        />
+        <div data-gsap="fade-up">
+          <ProjectScreenshotsGallery
+            screenshots={screenshots}
+            accentColor={project.accentColor}
+          />
+        </div>
       </div>
-    </Section>
+    </section>
   )
 }
 
-// ─── Video section ────────────────────────────────────────────────────────────
+// ─── Video section — no SceneBackground ──────────────────────────────────────
 function VideoSection({ project, videoSrc }) {
   return (
     <Section bg="var(--bg-1)">
@@ -190,21 +196,10 @@ function VideoSection({ project, videoSrc }) {
   )
 }
 
-// ─── Live preview section ─────────────────────────────────────────────────────
+// ─── Live preview section — no SceneBackground ────────────────────────────────
 function LivePreviewSection({ project, sectionIndex }) {
   return (
-    <Section
-      bg="var(--bg-base)"
-      scene
-      sceneProps={{
-        gridOpacity:     0.07,
-        glow1Color:      parseAccent(project.accentColor).replace(/[\d.]+\)$/, '0.08)'),
-        glow2Color:      'rgba(71,49,152,0.05)',
-        glow1Pos:        { top: '20%', left: '-10%' },
-        glow2Pos:        { bottom: '-10%', right: '-5%' },
-        parallaxStrength: 0.4,
-      }}
-    >
+    <Section bg="var(--bg-base)">
       <SectionLabel index={sectionIndex} label="Live Preview" />
 
       <div style={{
@@ -239,7 +234,7 @@ function LivePreviewSection({ project, sectionIndex }) {
   )
 }
 
-// ─── Technical details section ────────────────────────────────────────────────
+// ─── Technical details section — no SceneBackground ──────────────────────────
 function TechnicalSection({ project, sectionIndex }) {
   const accent = parseAccent(project.accentColor)
 
@@ -284,12 +279,12 @@ function TechnicalSection({ project, sectionIndex }) {
                 {item.label}
               </span>
               <span style={{
-                fontFamily:  'var(--font-mono)',
-                fontSize:    '0.72rem',
-                color:       'var(--muted)',
-                lineHeight:  1.85,
-                whiteSpace:  'pre-line',
-                display:     'block',
+                fontFamily:   'var(--font-mono)',
+                fontSize:     '0.72rem',
+                color:        'var(--muted)',
+                lineHeight:   1.85,
+                whiteSpace:   'pre-line',
+                display:      'block',
                 letterSpacing:'0.02em',
               }}>
                 {item.value}
@@ -358,23 +353,25 @@ function TechnicalSection({ project, sectionIndex }) {
             </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', maxWidth: '620px' }}>
               {project.tags.map(tag => (
-                <span key={tag} style={{
-                  fontFamily:    'var(--font-mono)',
-                  fontSize:      '0.68rem',
-                  color:         'var(--muted)',
-                  padding:       '0.3rem 0.85rem',
-                  border:        '1px solid var(--border)',
-                  letterSpacing: '0.04em',
-                  transition:    'border-color 0.2s ease, color 0.2s ease',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = accent.replace(/[\d.]+\)$/, '0.5)')
-                  e.currentTarget.style.color = 'var(--text)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'var(--border)'
-                  e.currentTarget.style.color = 'var(--muted)'
-                }}
+                <span
+                  key={tag}
+                  style={{
+                    fontFamily:    'var(--font-mono)',
+                    fontSize:      '0.68rem',
+                    color:         'var(--muted)',
+                    padding:       '0.3rem 0.85rem',
+                    border:        '1px solid var(--border)',
+                    letterSpacing: '0.04em',
+                    transition:    'border-color 0.2s ease, color 0.2s ease',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = accent.replace(/[\d.]+\)$/, '0.5)')
+                    e.currentTarget.style.color = 'var(--text)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = 'var(--border)'
+                    e.currentTarget.style.color = 'var(--muted)'
+                  }}
                 >
                   {tag}
                 </span>
@@ -387,7 +384,7 @@ function TechnicalSection({ project, sectionIndex }) {
   )
 }
 
-// ─── Next project ─────────────────────────────────────────────────────────────
+// ─── Next project — SceneBackground ON ───────────────────────────────────────
 function NextProject({ current }) {
   const currentIndex = PROJECTS.findIndex(p => p.slug === current.slug)
   const next = PROJECTS[(currentIndex + 1) % PROJECTS.length]
@@ -402,23 +399,33 @@ function NextProject({ current }) {
       position:   'relative',
       overflow:   'hidden',
     }}>
+      {/* SceneBackground — only here alongside Screenshots */}
+      <SceneBackground
+        gridOpacity={0.09}
+        glow1Color="rgba(71,49,152,0.12)"
+        glow2Color="rgba(71,49,152,0.06)"
+        glow1Pos={{ top: '-10%', right: '-5%' }}
+        glow2Pos={{ bottom: '-10%', left: '-8%' }}
+        parallaxStrength={0.6}
+      />
+
       {nextCover && (
         <div
           aria-hidden="true"
           style={{
-            position:   'absolute',
-            inset:      0,
-            backgroundImage: `url(${nextCover})`,
-            backgroundSize: 'cover',
+            position:           'absolute',
+            inset:              0,
+            backgroundImage:    `url(${nextCover})`,
+            backgroundSize:     'cover',
             backgroundPosition: 'top center',
-            filter:     'brightness(0.08) saturate(0.3)',
-            transform:  'scale(1.04)',
-            zIndex:     0,
+            filter:             'brightness(0.08) saturate(0.3)',
+            transform:          'scale(1.04)',
+            zIndex:             0,
           }}
         />
       )}
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <span style={{
           display:       'block',
           fontFamily:    'var(--font-mono)',
@@ -472,21 +479,21 @@ function NextProject({ current }) {
               {next.title}
             </h3>
             <p style={{
-              fontFamily:  'var(--font-mono)',
-              fontSize:    '0.68rem',
-              color:       'var(--ghost)',
-              marginTop:   '0.6rem',
-              maxWidth:    '400px',
-              lineHeight:  1.7,
+              fontFamily: 'var(--font-mono)',
+              fontSize:   '0.68rem',
+              color:      'var(--ghost)',
+              marginTop:  '0.6rem',
+              maxWidth:   '400px',
+              lineHeight: 1.7,
             }}>
               {next.tagline}
             </p>
           </div>
           <span style={{
-            fontFamily:  'var(--font-mono)',
-            fontSize:    '1.8rem',
-            color:       'var(--muted)',
-            flexShrink:  0,
+            fontFamily: 'var(--font-mono)',
+            fontSize:   '1.8rem',
+            color:      'var(--muted)',
+            flexShrink: 0,
           }}>
             ↗
           </span>
@@ -531,17 +538,17 @@ export default function ProjectDetailPage() {
   }
 
   // ── Determine which sections are active ──────────────────────────────────
-  const hasScreenshots  = screenshots.length > 0
-  const showVideo       = project.hasVideo && !!videoSrc
-  const showLive        = !!project.live
+  const hasScreenshots = screenshots.length > 0
+  const showVideo      = project.hasVideo && !!videoSrc
+  const showLive       = !!project.live
 
   // ── Dynamic section index counter for SectionLabel ──────────────────────
   let sectionIdx = 1   // 01 = hero
 
-  const screenshotIdx   = hasScreenshots ? ++sectionIdx : null
-  const videoIdx        = showVideo      ? ++sectionIdx : null
-  const liveIdx         = showLive       ? ++sectionIdx : null
-  const techIdx         = ++sectionIdx
+  const screenshotIdx = hasScreenshots ? ++sectionIdx : null  // eslint-disable-line no-unused-vars
+  const videoIdx      = showVideo      ? ++sectionIdx : null  // eslint-disable-line no-unused-vars
+  const liveIdx       = showLive       ? ++sectionIdx : null
+  const techIdx       = ++sectionIdx
 
   const fmt = (n) => String(n).padStart(2, '0')
 
@@ -577,25 +584,25 @@ export default function ProjectDetailPage() {
       {/* 01 — Hero */}
       <ProjectDetailHero project={project} />
 
-      {/* 02 — Screenshots (conditional) */}
+      {/* 02 — Screenshots (conditional) — SceneBackground inside */}
       {hasScreenshots && (
         <ScreenshotsSection project={project} screenshots={screenshots} />
       )}
 
-      {/* 03 — Video Demo (conditional) */}
+      {/* 03 — Video Demo (conditional) — no SceneBackground */}
       {showVideo && (
         <VideoSection project={project} videoSrc={videoSrc} />
       )}
 
-      {/* 04 — Live Preview (conditional) */}
+      {/* 04 — Live Preview (conditional) — no SceneBackground */}
       {showLive && (
         <LivePreviewSection project={project} sectionIndex={fmt(liveIdx)} />
       )}
 
-      {/* 05 — Technical Details */}
+      {/* 05 — Technical Details — no SceneBackground */}
       <TechnicalSection project={project} sectionIndex={fmt(techIdx)} />
 
-      {/* 06 — Next Project */}
+      {/* 06 — Next Project — SceneBackground inside */}
       <NextProject current={project} />
     </PageWrapper>
   )

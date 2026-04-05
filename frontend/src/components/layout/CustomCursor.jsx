@@ -33,28 +33,25 @@ export default function CustomCursor() {
     const ring = ringRef.current
     if (!ring) return
 
-    const onEnter = () => {
+    const onEnter = (e) => {
+      if (!e.target.closest('a, button, [data-cursor]')) return
       ring.style.width       = '48px'
       ring.style.height      = '48px'
       ring.style.borderColor = 'var(--indigo)'
     }
-    const onLeave = () => {
+    const onLeave = (e) => {
+      if (!e.target.closest('a, button, [data-cursor]')) return
       ring.style.width       = '36px'
       ring.style.height      = '36px'
       ring.style.borderColor = 'var(--muted)'
     }
 
-    const targets = document.querySelectorAll('a, button, [data-cursor]')
-    targets.forEach(el => {
-      el.addEventListener('mouseenter', onEnter)
-      el.addEventListener('mouseleave', onLeave)
-    })
+    document.addEventListener('mouseover',  onEnter)
+    document.addEventListener('mouseout',   onLeave)
 
     return () => {
-      targets.forEach(el => {
-        el.removeEventListener('mouseenter', onEnter)
-        el.removeEventListener('mouseleave', onLeave)
-      })
+      document.removeEventListener('mouseover',  onEnter)
+      document.removeEventListener('mouseout',   onLeave)
     }
   }, [])
 

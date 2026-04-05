@@ -8,59 +8,65 @@ export default function PageWrapper({ children, style = {} }) {
   const wrapRef = useRef(null)
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Animate all [data-gsap="fade-up"] inside this page
-      gsap.utils.toArray('[data-gsap="fade-up"]').forEach(el => {
-        gsap.fromTo(el,
-          { opacity: 0, y: 40 },
-          {
-            opacity:  1,
-            y:        0,
-            duration: 0.8,
-            ease:     'expo.out',
-            scrollTrigger: {
-              trigger: el,
-              start:   'top 88%',
-              toggleActions: 'play none none none',
-            },
-          }
-        )
-      })
+    let ctx
 
-      gsap.utils.toArray('[data-gsap="fade-in"]').forEach(el => {
-        gsap.fromTo(el,
-          { opacity: 0 },
-          {
-            opacity:  1,
-            duration: 0.6,
-            ease:     'expo.out',
-            scrollTrigger: {
-              trigger: el,
-              start:   'top 90%',
-              toggleActions: 'play none none none',
-            },
-          }
-        )
-      })
+    const id = requestAnimationFrame(() => {
+      ctx = gsap.context(() => {
+        gsap.utils.toArray('[data-gsap="fade-up"]').forEach(el => {
+          gsap.fromTo(el,
+            { opacity: 0, y: 40 },
+            {
+              opacity:  1,
+              y:        0,
+              duration: 0.8,
+              ease:     'expo.out',
+              scrollTrigger: {
+                trigger: el,
+                start:   'top 88%',
+                toggleActions: 'play none none none',
+              },
+            }
+          )
+        })
 
-      gsap.utils.toArray('[data-gsap="clip-reveal"]').forEach(el => {
-        gsap.fromTo(el,
-          { clipPath: 'inset(0 100% 0 0)' },
-          {
-            clipPath: 'inset(0 0% 0 0)',
-            duration: 1,
-            ease:     'expo.out',
-            scrollTrigger: {
-              trigger: el,
-              start:   'top 85%',
-              toggleActions: 'play none none none',
-            },
-          }
-        )
-      })
-    }, wrapRef)
+        gsap.utils.toArray('[data-gsap="fade-in"]').forEach(el => {
+          gsap.fromTo(el,
+            { opacity: 0 },
+            {
+              opacity:  1,
+              duration: 0.6,
+              ease:     'expo.out',
+              scrollTrigger: {
+                trigger: el,
+                start:   'top 90%',
+                toggleActions: 'play none none none',
+              },
+            }
+          )
+        })
 
-    return () => ctx.revert()
+        gsap.utils.toArray('[data-gsap="clip-reveal"]').forEach(el => {
+          gsap.fromTo(el,
+            { clipPath: 'inset(0 100% 0 0)' },
+            {
+              clipPath: 'inset(0 0% 0 0)',
+              duration: 1,
+              ease:     'expo.out',
+              scrollTrigger: {
+                trigger: el,
+                start:   'top 85%',
+                toggleActions: 'play none none none',
+              },
+            }
+          )
+        })
+      }, wrapRef)
+    })
+
+    return () => {
+      cancelAnimationFrame(id)
+      ctx?.revert()
+    }
   }, [])
 
   return (

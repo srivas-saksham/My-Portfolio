@@ -9,9 +9,7 @@
  *
  *   src/assets/screenshots/{slug}/*.{jpg,jpeg,png,webp,avif}
  *   src/assets/videos/{slug}.mp4
- *
- * Usage:
- *   const { screenshots, videoSrc, isLoading } = useProjectAssets('rizara-luxe')
+ *   src/assets/project-logos/{slug}.{png,svg,webp}
  */
 
 import { useMemo } from 'react'
@@ -33,14 +31,10 @@ const videoModules = import.meta.glob(
   { eager: true, import: 'default' }
 )
 
-// ─── Helper: normalise a glob key to a comparable path segment ───────────────
-const slugFrom = (key) => {
-  // key looks like: ../assets/screenshots/rizara-luxe/shot-01.jpg
-  const parts = key.split('/')
-  // For screenshots: parts[3] = slug folder
-  // For videos:      parts[3] = slug.mp4
-  return parts
-}
+const logoModules = import.meta.glob(
+  '../assets/project-logos/*.{png,svg,webp,avif}',
+  { eager: true, import: 'default' }
+)
 
 // ─── Hook ────────────────────────────────────────────────────────────────────
 export function useProjectAssets(slug) {
@@ -76,10 +70,25 @@ export function useProjectAssets(slug) {
     return entry ? entry[1] : null
   }, [slug])
 
+  const logoSrc = useMemo(() => {
+    if (!slug) return null
+
+    const entry = Object.entries(logoModules).find(([key]) => {
+      // key: ../assets/project-logos/rizara-luxe.png  (or .svg / .webp)
+      const filename = key.split('/').pop()                   // rizara-luxe.png
+      const nameOnly = filename.replace(/\.[^.]+$/, '')       // rizara-luxe
+      return nameOnly === slug
+    })
+
+    return entry ? entry[1] : null
+  }, [slug])
+
   return {
     screenshots,
     videoSrc,
+    logoSrc,
     hasScreenshots: screenshots.length > 0,
     hasVideo:       videoSrc !== null,
+    hasLogo:        logoSrc  !== null,
   }
 }
