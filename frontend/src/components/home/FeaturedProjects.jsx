@@ -1,8 +1,17 @@
+/**
+ * FeaturedProjects.jsx
+ *
+ * Homepage section — top 3 featured projects.
+ * Each row now shows a small cover thumbnail from the project's screenshot folder.
+ * All content from the original is preserved; thumbnails are purely additive.
+ */
+
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { PROJECTS } from '@data/projects'
+import { useProjectAssets } from '@hooks/useProjectAssets'
 import SectionLabel from '@components/ui/SectionLabel'
 import Tag from '@components/ui/Tag'
 import Button from '@components/ui/Button'
@@ -12,10 +21,65 @@ gsap.registerPlugin(ScrollTrigger)
 
 const FEATURED = PROJECTS.slice(0, 3)
 
+// ─── Thumbnail ───────────────────────────────────────────────────────────────
+function ProjectThumbnail({ slug, accentColor, hovered }) {
+  const { screenshots } = useProjectAssets(slug)
+  const cover = screenshots[0]?.url ?? null
+  const [imgError, setImgError] = useState(false)
+  const accent = accentColor ?? 'rgba(71,49,152,0.15)'
+
+  return (
+    <div style={{
+      width:        '120px',
+      height:       '72px',
+      flexShrink:   0,
+      overflow:     'hidden',
+      background:   'var(--bg-3)',
+      border:       `1px solid ${hovered ? 'rgba(255,255,255,0.09)' : 'rgba(255,255,255,0.04)'}`,
+      position:     'relative',
+      transition:   'border-color 0.3s ease',
+    }}>
+      {cover && !imgError ? (
+        <img
+          src={cover}
+          alt=""
+          aria-hidden="true"
+          onError={() => setImgError(true)}
+          style={{
+            width:      '100%',
+            height:     '100%',
+            objectFit:  'cover',
+            objectPosition: 'top center',
+            display:    'block',
+            filter:     hovered
+              ? 'brightness(0.8) saturate(0.85)'
+              : 'brightness(0.55) saturate(0.7)',
+            transform:  hovered ? 'scale(1.06)' : 'scale(1)',
+            transition: 'filter 0.4s ease, transform 0.55s cubic-bezier(0.19,1,0.22,1)',
+          }}
+        />
+      ) : (
+        <div style={{
+          position:   'absolute',
+          inset:      0,
+          background: `radial-gradient(ellipse at center, ${accent} 0%, transparent 80%)`,
+        }} />
+      )}
+      {/* Bottom gradient fade */}
+      <div style={{
+        position:   'absolute',
+        inset:      0,
+        background: 'linear-gradient(180deg, transparent 30%, rgba(8,8,8,0.6) 100%)',
+        pointerEvents:'none',
+      }} />
+    </div>
+  )
+}
+
 // ─── Single Project Row ───────────────────────────────────────────────────────
 function ProjectRow({ project }) {
-  const rowRef   = useRef(null)
-  const glowRef  = useRef(null)
+  const rowRef  = useRef(null)
+  const glowRef = useRef(null)
   const [hovered, setHovered] = useState(false)
   const [mouseLocal, setMouseLocal] = useState({ x: 0.5, y: 0.5 })
 
@@ -24,18 +88,13 @@ function ProjectRow({ project }) {
     const x = (e.clientX - rect.left) / rect.width
     const y = (e.clientY - rect.top)  / rect.height
     setMouseLocal({ x, y })
-
-    const rotX = (y - 0.5) * -6
-    const rotY = (x - 0.5) *  6
-
     gsap.to(rowRef.current, {
-      rotateX: rotX,
-      rotateY: rotY,
-      duration: 0.4,
+      rotateX: (y - 0.5) * -5,
+      rotateY: (x - 0.5) *  5,
+      duration: 0.45,
       ease: 'power2.out',
       transformStyle: 'preserve-3d',
     })
-
     if (glowRef.current) {
       glowRef.current.style.left = `${x * 100}%`
       glowRef.current.style.top  = `${y * 100}%`
@@ -45,12 +104,12 @@ function ProjectRow({ project }) {
   const onMouseLeave = () => {
     setHovered(false)
     gsap.to(rowRef.current, {
-      rotateX: 0,
-      rotateY: 0,
-      duration: 0.6,
-      ease: 'expo.out',
+      rotateX: 0, rotateY: 0,
+      duration: 0.65, ease: 'expo.out',
     })
   }
+
+  const accent = project.accentColor ?? 'rgba(71,49,152,0.15)'
 
   return (
     <div
@@ -65,17 +124,17 @@ function ProjectRow({ project }) {
         onMouseLeave={onMouseLeave}
         style={{
           display:             'grid',
-          gridTemplateColumns: '3.5rem 1fr auto',
+          gridTemplateColumns: '3.5rem auto 1fr auto',
           gap:                 '1.75rem',
-          alignItems:          'start',
-          padding:             '2.25rem 2rem',
+          alignItems:          'center',
+          padding:             '1.75rem 2rem',
           marginBottom:        '1px',
           background:          hovered
-            ? 'rgba(255,255,255,0.035)'
-            : 'rgba(255,255,255,0.015)',
+            ? 'rgba(255,255,255,0.03)'
+            : 'rgba(255,255,255,0.012)',
           border:              `1px solid ${hovered
-            ? 'rgba(255,255,255,0.1)'
-            : 'rgba(255,255,255,0.045)'}`,
+            ? 'rgba(255,255,255,0.09)'
+            : 'rgba(255,255,255,0.04)'}`,
           borderRadius:        '16px',
           cursor:              'none',
           textDecoration:      'none',
@@ -86,53 +145,49 @@ function ProjectRow({ project }) {
           transformStyle:      'preserve-3d',
           willChange:          'transform',
           boxShadow:           hovered
-            ? '0 24px 60px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07)'
+            ? `0 24px 60px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px ${accent}`
             : '0 2px 12px rgba(0,0,0,0.2)',
         }}
       >
-        {/* Radial white glow that follows mouse */}
+        {/* Radial glow */}
         <div
           ref={glowRef}
           aria-hidden="true"
           style={{
             position:      'absolute',
-            width:         '240px',
-            height:        '240px',
+            width:         '280px',
+            height:        '280px',
             borderRadius:  '50%',
-            background:    'radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 65%)',
+            background:    `radial-gradient(circle, ${accent} 0%, transparent 65%)`,
             transform:     'translate(-50%,-50%)',
             pointerEvents: 'none',
-            transition:    'opacity 0.3s ease',
             opacity:       hovered ? 1 : 0,
+            transition:    'opacity 0.3s ease',
             zIndex:        0,
             left:          `${mouseLocal.x * 100}%`,
             top:           `${mouseLocal.y * 100}%`,
           }}
         />
 
-        {/* Top edge shine */}
+        {/* Top-edge shine */}
         {hovered && (
-          <div
-            aria-hidden="true"
-            style={{
-              position:   'absolute',
-              top:        0,
-              left:       '10%',
-              right:      '10%',
-              height:     '1px',
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
-              zIndex:     0,
-            }}
-          />
+          <div aria-hidden="true" style={{
+            position:   'absolute',
+            top:        0,
+            left:       '8%',
+            right:      '8%',
+            height:     '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)',
+            zIndex:     0,
+          }} />
         )}
 
         {/* Number */}
         <span style={{
           fontFamily:    'var(--font-mono)',
           fontSize:      '0.62rem',
-          color:         hovered ? 'rgba(255,255,255,0.25)' : 'var(--ghost)',
+          color:         hovered ? 'rgba(255,255,255,0.22)' : 'var(--ghost)',
           letterSpacing: '0.08em',
-          paddingTop:    '0.25rem',
           transition:    'color 0.3s ease',
           position:      'relative',
           zIndex:        1,
@@ -141,13 +196,23 @@ function ProjectRow({ project }) {
           {project.id}
         </span>
 
+        {/* Thumbnail */}
+        <div style={{ position: 'relative', zIndex: 1, transform: 'translateZ(10px)' }}>
+          <ProjectThumbnail
+            slug={project.slug}
+            accentColor={project.accentColor}
+            hovered={hovered}
+          />
+        </div>
+
         {/* Body */}
         <div style={{ position: 'relative', zIndex: 1, transform: 'translateZ(12px)' }}>
+          {/* Tags */}
           <div style={{
             display:      'flex',
             flexWrap:     'wrap',
-            gap:          '0.35rem',
-            marginBottom: '0.8rem',
+            gap:          '0.32rem',
+            marginBottom: '0.7rem',
           }}>
             {project.tags.slice(0, 4).map(tag => (
               <Tag key={tag}>{tag}</Tag>
@@ -156,15 +221,15 @@ function ProjectRow({ project }) {
 
           <h3 style={{
             fontFamily:    'var(--font-display)',
-            fontSize:      'clamp(1.5rem, 2.8vw, 2.2rem)',
+            fontSize:      'clamp(1.4rem, 2.6vw, 2.1rem)',
             fontWeight:    600,
             letterSpacing: '-0.03em',
             lineHeight:    0.95,
             color:         'var(--text)',
-            marginBottom:  '0.65rem',
+            marginBottom:  '0.55rem',
             transition:    'color 0.25s ease',
             textShadow:    hovered
-              ? '0 0 40px rgba(255,255,255,0.12), 0 1px 0 rgba(255,255,255,0.05)'
+              ? '0 0 40px rgba(255,255,255,0.1)'
               : 'none',
           }}>
             {project.title}
@@ -172,20 +237,18 @@ function ProjectRow({ project }) {
 
           <p style={{
             fontFamily: 'var(--font-mono)',
-            fontSize:   '0.73rem',
+            fontSize:   '0.7rem',
             color:      'var(--muted)',
             lineHeight: 1.85,
-            maxWidth:   '560px',
-            transition: 'color 0.3s ease',
+            maxWidth:   '480px',
           }}>
             {project.tagline}
           </p>
 
-          {/* Status + Year */}
           <div style={{
             display:    'flex',
             gap:        '0.5rem',
-            marginTop:  '1rem',
+            marginTop:  '0.85rem',
             alignItems: 'center',
           }}>
             <Tag variant={project.status === 'Live' ? 'indigo' : 'ghost'}>
@@ -193,7 +256,7 @@ function ProjectRow({ project }) {
             </Tag>
             <span style={{
               fontFamily:    'var(--font-mono)',
-              fontSize:      '0.6rem',
+              fontSize:      '0.57rem',
               color:         'var(--ghost)',
               letterSpacing: '0.08em',
             }}>
@@ -204,15 +267,10 @@ function ProjectRow({ project }) {
 
         {/* Arrow */}
         <div style={{
-          paddingTop:    '0.25rem',
-          position:      'relative',
-          zIndex:        1,
-          transform:     `translateZ(16px) rotate(${hovered ? '0' : '-45'}deg)`,
-          transition:    'transform 0.3s cubic-bezier(0.19,1,0.22,1)',
-          display:       'flex',
-          flexDirection: 'column',
-          alignItems:    'center',
-          gap:           '0.5rem',
+          position:   'relative',
+          zIndex:     1,
+          transform:  `translateZ(16px) rotate(${hovered ? '0' : '-45'}deg)`,
+          transition: 'transform 0.3s cubic-bezier(0.19,1,0.22,1)',
         }}>
           <span style={{
             fontFamily: 'var(--font-mono)',
@@ -232,15 +290,13 @@ function ProjectRow({ project }) {
 // ─── Section ─────────────────────────────────────────────────────────────────
 export default function FeaturedProjects() {
   return (
-    <section
-      style={{
-        padding:    'clamp(5rem, 8vw, 9rem) 2.5rem',
-        background: 'var(--bg-1)',
-        position:   'relative',
-        overflow:   'hidden',
-        borderTop:  '1px solid rgba(255,255,255,0.035)',
-      }}
-    >
+    <section style={{
+      padding:    'clamp(5rem, 8vw, 9rem) 2.5rem',
+      background: 'var(--bg-1)',
+      position:   'relative',
+      overflow:   'hidden',
+      borderTop:  '1px solid rgba(255,255,255,0.035)',
+    }}>
       <SceneBackground
         gridOpacity={0.09}
         glow1Color="rgba(255,255,255,0.025)"
@@ -261,7 +317,7 @@ export default function FeaturedProjects() {
             justifyContent: 'space-between',
             flexWrap:       'wrap',
             gap:            '2rem',
-            marginBottom:   '3.5rem',
+            marginBottom:   '3rem',
           }}
         >
           <div>
@@ -277,16 +333,13 @@ export default function FeaturedProjects() {
               Production projects — AI systems, web platforms, and brand infrastructure.
             </p>
           </div>
-
-          <Button to="/projects" variant="ghost">
-            View All Work →
-          </Button>
+          <Button to="/projects" variant="ghost">View All Work →</Button>
         </div>
 
         {/* Project rows */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {FEATURED.map((project, i) => (
-            <ProjectRow key={project.slug} project={project} index={i} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          {FEATURED.map((project) => (
+            <ProjectRow key={project.slug} project={project} />
           ))}
         </div>
 
@@ -294,7 +347,7 @@ export default function FeaturedProjects() {
         <div
           data-gsap="fade-up"
           style={{
-            marginTop:      '4rem',
+            marginTop:      '3.5rem',
             display:        'flex',
             justifyContent: 'center',
             alignItems:     'center',
@@ -307,11 +360,9 @@ export default function FeaturedProjects() {
             background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06))',
             maxWidth:   '200px',
           }} />
-
           <Button to="/projects" variant="ghost" style={{ fontSize: '0.68rem', letterSpacing: '0.12em' }}>
             All {PROJECTS.length} Projects ↗
           </Button>
-
           <div style={{
             flex:       1,
             height:     '1px',
@@ -320,13 +371,6 @@ export default function FeaturedProjects() {
           }} />
         </div>
       </div>
-
-      <style>{`
-        @keyframes floatA {
-          0%,100% { transform: translateY(0px); }
-          50%      { transform: translateY(-16px); }
-        }
-      `}</style>
     </section>
   )
 }

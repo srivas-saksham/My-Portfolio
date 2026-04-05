@@ -21,7 +21,7 @@ export default function SectionLabel({ index, label }) {
       {index && (
         <span style={{
           fontFamily:    'var(--font-mono)',
-          fontSize:      '0.58rem',
+          fontSize:      '1.18rem',
           color:         'rgba(71,49,152,0.7)',
           letterSpacing: '0.14em',
           textTransform: 'uppercase',
@@ -32,7 +32,7 @@ export default function SectionLabel({ index, label }) {
 
       <span style={{
         fontFamily:    'var(--font-mono)',
-        fontSize:      '0.63rem',
+        fontSize:      '1.13rem',
         color:         'var(--muted)',
         letterSpacing: '0.12em',
         textTransform: 'uppercase',

@@ -1,33 +1,67 @@
+/**
+ * ProjectCard.jsx
+ *
+ * Grid card for the projects overview page.
+ * Primary visual: first screenshot from the project's asset folder.
+ * Falls back to a styled placeholder if no screenshots are present.
+ *
+ * All project data comes from props — nothing hardcoded.
+ */
+
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Tag from '@components/ui/Tag'
+import { useProjectAssets } from '@hooks/useProjectAssets'
 
-/**
- * ProjectCard
- * Card layout for displaying a project in a grid.
- * Used on ProjectsPage when a grid layout is preferred.
- * Features: 3D tilt on hover, mouse-following glow, smooth reveal.
- *
- * Props:
- *   project  — project data object from projects.js
- *   index    — numeric position (0-based) for stagger delay
- */
+// ─── Image placeholder ───────────────────────────────────────────────────────
+function CardImagePlaceholder({ project }) {
+  return (
+    <div
+      style={{
+        position:   'absolute',
+        inset:      0,
+        display:    'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: `linear-gradient(135deg, ${project.accentColor ?? 'rgba(71,49,152,0.15)'} 0%, rgba(8,8,8,0) 100%)`,
+      }}
+    >
+      {/* Watermark index */}
+      <span style={{
+        fontFamily:       'var(--font-display)',
+        fontSize:         'clamp(5rem, 12vw, 9rem)',
+        fontWeight:       700,
+        letterSpacing:    '-0.05em',
+        color:            'transparent',
+        WebkitTextStroke: '1px rgba(245,245,245,0.06)',
+        userSelect:       'none',
+        lineHeight:       1,
+      }}>
+        {project.id}
+      </span>
+    </div>
+  )
+}
+
+// ─── Main card ───────────────────────────────────────────────────────────────
 export default function ProjectCard({ project, index = 0 }) {
   const cardRef  = useRef(null)
   const glowRef  = useRef(null)
   const [hovered, setHovered] = useState(false)
+  const [imgError, setImgError] = useState(false)
 
+  const { screenshots } = useProjectAssets(project.slug)
+  const coverImage = screenshots[0]?.url ?? null
+
+  // ── 3-D tilt
   const onMouseMove = (e) => {
     const rect = cardRef.current.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width
     const y = (e.clientY - rect.top)  / rect.height
-
-    // Tilt
-    const rotX = (y - 0.5) * -8
-    const rotY = (x - 0.5) *  8
-    cardRef.current.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`
-
-    // Glow
+    const rotX = (y - 0.5) * -7
+    const rotY = (x - 0.5) *  7
+    cardRef.current.style.transform =
+      `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-4px)`
     if (glowRef.current) {
       glowRef.current.style.left = `${x * 100}%`
       glowRef.current.style.top  = `${y * 100}%`
@@ -36,8 +70,11 @@ export default function ProjectCard({ project, index = 0 }) {
 
   const onMouseLeave = () => {
     setHovered(false)
-    cardRef.current.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)'
+    cardRef.current.style.transform =
+      'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0)'
   }
+
+  const accent = project.accentColor ?? 'rgba(71,49,152,0.15)'
 
   return (
     <Link
@@ -50,95 +87,172 @@ export default function ProjectCard({ project, index = 0 }) {
       style={{
         display:        'flex',
         flexDirection:  'column',
-        padding:        '1.75rem',
-        background:     hovered ? 'rgba(255,255,255,0.03)' : 'var(--bg-2)',
-        border:         `1px solid ${hovered ? 'rgba(255,255,255,0.08)' : 'var(--border)'}`,
+        background:     hovered ? 'rgba(255,255,255,0.028)' : 'var(--bg-2)',
+        border:         `1px solid ${hovered ? 'rgba(255,255,255,0.09)' : 'var(--border)'}`,
         textDecoration: 'none',
         cursor:         'none',
         position:       'relative',
         overflow:       'hidden',
-        transition:     'background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+        transition:     'background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease',
         boxShadow:      hovered
-          ? '0 20px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)'
-          : '0 2px 8px rgba(0,0,0,0.15)',
+          ? `0 28px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px ${accent}`
+          : '0 2px 12px rgba(0,0,0,0.18)',
         willChange:     'transform',
-        animationDelay: `${index * 0.08}s`,
+        animationDelay: `${index * 0.07}s`,
       }}
     >
-      {/* Mouse-following glow */}
+      {/* ── Mouse-following radial glow ── */}
       <div
         ref={glowRef}
         aria-hidden="true"
         style={{
-          position:     'absolute',
-          width:        '180px',
-          height:       '180px',
-          borderRadius: '50%',
-          background:   'radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 65%)',
-          transform:    'translate(-50%,-50%)',
-          pointerEvents:'none',
-          opacity:      hovered ? 1 : 0,
-          transition:   'opacity 0.3s ease',
-          zIndex:       0,
+          position:      'absolute',
+          width:         '220px',
+          height:        '220px',
+          borderRadius:  '50%',
+          background:    `radial-gradient(circle, ${accent} 0%, transparent 65%)`,
+          transform:     'translate(-50%,-50%)',
+          pointerEvents: 'none',
+          opacity:       hovered ? 1 : 0,
+          transition:    'opacity 0.3s ease',
+          zIndex:        0,
         }}
       />
 
-      {/* Indigo accent top-left */}
+      {/* ── Left accent strip ── */}
       <div
         aria-hidden="true"
         style={{
-          position:  'absolute',
-          top:       0,
-          left:      0,
-          width:     '2px',
-          height:    hovered ? '100%' : '0%',
-          background:'var(--indigo)',
-          transition:'height 0.5s cubic-bezier(0.19,1,0.22,1)',
-          zIndex:    0,
+          position:   'absolute',
+          top:        0,
+          left:       0,
+          width:      '2px',
+          height:     hovered ? '100%' : '0%',
+          background: `linear-gradient(180deg, transparent 0%, ${accent.replace('0.', '0.8').replace('rgba(', 'rgba(').replace(/,[^,)]+\)/, ', 0.7)')} 50%, transparent 100%)`,
+          transition: 'height 0.55s cubic-bezier(0.19,1,0.22,1)',
+          zIndex:     1,
         }}
       />
 
-      {/* Content */}
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* ── Screenshot hero image ── */}
+      <div style={{
+        position:   'relative',
+        width:      '100%',
+        aspectRatio:'16/9',
+        overflow:   'hidden',
+        background: 'var(--bg-3)',
+        flexShrink: 0,
+      }}>
+        {coverImage && !imgError ? (
+          <>
+            <img
+              src={coverImage}
+              alt={`${project.title} screenshot`}
+              onError={() => setImgError(true)}
+              style={{
+                width:      '100%',
+                height:     '100%',
+                objectFit:  'cover',
+                objectPosition: 'top center',
+                display:    'block',
+                transition: 'transform 0.55s cubic-bezier(0.19,1,0.22,1), filter 0.35s ease',
+                transform:  hovered ? 'scale(1.04)' : 'scale(1)',
+                filter:     hovered ? 'brightness(0.85)' : 'brightness(0.72) saturate(0.9)',
+              }}
+            />
+            {/* Overlay gradient — always present, intensifies on hover */}
+            <div style={{
+              position:   'absolute',
+              inset:      0,
+              background: `linear-gradient(
+                180deg,
+                transparent 0%,
+                rgba(8,8,8,0.2) 60%,
+                rgba(8,8,8,0.85) 100%
+              )`,
+              transition: 'opacity 0.3s ease',
+            }} />
+            {/* Hover: accent wash */}
+            {hovered && (
+              <div style={{
+                position:   'absolute',
+                inset:      0,
+                background: accent,
+                mixBlendMode:'multiply',
+                transition: 'opacity 0.3s ease',
+              }} />
+            )}
+          </>
+        ) : (
+          <CardImagePlaceholder project={project} />
+        )}
 
-        {/* Header row */}
-        <div style={{
-          display:        'flex',
-          justifyContent: 'space-between',
-          alignItems:     'flex-start',
-          marginBottom:   '1.25rem',
-        }}>
-          <span style={{
+        {/* Screenshot count badge */}
+        {screenshots.length > 1 && (
+          <div style={{
+            position:      'absolute',
+            bottom:        '0.65rem',
+            right:         '0.65rem',
             fontFamily:    'var(--font-mono)',
-            fontSize:      '0.65rem',
-            color:         hovered ? 'rgba(71,49,152,0.9)' : 'var(--ghost)',
+            fontSize:      '0.52rem',
+            color:         'rgba(245,245,245,0.55)',
             letterSpacing: '0.08em',
-            transition:    'color 0.25s ease',
+            background:    'rgba(8,8,8,0.6)',
+            padding:       '0.25rem 0.55rem',
+            backdropFilter:'blur(8px)',
+            borderRadius:  '2px',
+            border:        '1px solid rgba(255,255,255,0.06)',
           }}>
-            {project.id}
-          </span>
+            +{screenshots.length - 1} screenshots
+          </div>
+        )}
 
-          <Tag variant={project.status === 'Live' ? 'live' : 'ghost'}>
-            {project.status}
-          </Tag>
+        {/* Project ID watermark on image */}
+        <div style={{
+          position:      'absolute',
+          top:           '0.75rem',
+          left:          '0.75rem',
+          fontFamily:    'var(--font-mono)',
+          fontSize:      '0.55rem',
+          color:         'rgba(245,245,245,0.4)',
+          letterSpacing: '0.12em',
+          zIndex:        2,
+        }}>
+          {project.id}
         </div>
+      </div>
 
-        {/* Tags */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginBottom: '1rem' }}>
+      {/* ── Card body ── */}
+      <div style={{
+        position:      'relative',
+        zIndex:        1,
+        display:       'flex',
+        flexDirection: 'column',
+        flex:          1,
+        padding:       '1.5rem',
+        gap:           '0',
+      }}>
+
+        {/* Tags row */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginBottom: '0.9rem' }}>
           {project.tags.slice(0, 3).map(tag => (
             <Tag key={tag}>{tag}</Tag>
           ))}
+          {project.tags.length > 3 && (
+            <Tag variant="ghost">+{project.tags.length - 3}</Tag>
+          )}
         </div>
 
         {/* Title */}
         <h3 style={{
           fontFamily:    'var(--font-display)',
-          fontSize:      'clamp(1.4rem, 2.5vw, 1.8rem)',
+          fontSize:      'clamp(1.35rem, 2.2vw, 1.7rem)',
           fontWeight:    600,
           letterSpacing: '-0.03em',
           lineHeight:    1,
           color:         'var(--text)',
-          marginBottom:  '0.75rem',
+          marginBottom:  '0.65rem',
+          transition:    'color 0.25s ease',
         }}>
           {project.title}
         </h3>
@@ -146,10 +260,11 @@ export default function ProjectCard({ project, index = 0 }) {
         {/* Tagline */}
         <p style={{
           fontFamily: 'var(--font-mono)',
-          fontSize:   '0.7rem',
+          fontSize:   '0.68rem',
           color:      'var(--muted)',
           lineHeight: 1.85,
           flex:       1,
+          marginBottom:'1.25rem',
         }}>
           {project.tagline}
         </p>
@@ -159,21 +274,27 @@ export default function ProjectCard({ project, index = 0 }) {
           display:        'flex',
           justifyContent: 'space-between',
           alignItems:     'center',
-          marginTop:      '1.5rem',
           paddingTop:     '1rem',
-          borderTop:      '1px solid var(--border)',
+          borderTop:      `1px solid ${hovered ? 'rgba(255,255,255,0.07)' : 'var(--border)'}`,
+          transition:     'border-color 0.3s ease',
         }}>
-          <span style={{
-            fontFamily:    'var(--font-mono)',
-            fontSize:      '0.6rem',
-            color:         'var(--ghost)',
-            letterSpacing: '0.06em',
-          }}>
-            {project.year}
-          </span>
+          <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center' }}>
+            <Tag variant={project.status === 'Live' ? 'live' : 'default'}>
+              {project.status}
+            </Tag>
+            <span style={{
+              fontFamily:    'var(--font-mono)',
+              fontSize:      '0.57rem',
+              color:         'var(--ghost)',
+              letterSpacing: '0.06em',
+            }}>
+              {project.year}
+            </span>
+          </div>
+
           <span style={{
             fontFamily:  'var(--font-mono)',
-            fontSize:    '0.85rem',
+            fontSize:    '0.9rem',
             color:       hovered ? 'var(--text)' : 'var(--ghost)',
             transform:   hovered ? 'rotate(0deg)' : 'rotate(-45deg)',
             transition:  'transform 0.3s ease, color 0.25s ease',

@@ -19,7 +19,7 @@ export default function ProjectDetailHero({ project }) {
         fontWeight:    700,
         lineHeight:    1,
         color:         'transparent',
-        WebkitTextStroke: '1px rgba(71,49,152,0.12)',
+        WebkitTextStroke: '1px rgba(71,49,152,0.42)',
         pointerEvents: 'none',
         userSelect:    'none',
         letterSpacing: '-0.05em',

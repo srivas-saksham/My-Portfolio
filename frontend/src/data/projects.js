@@ -1,3 +1,15 @@
+/**
+ * projects.js
+ * Single source of truth for all project data.
+ *
+ * Media assets are resolved at build-time via import.meta.glob in useProjectAssets.js
+ * — this file only declares what *should* exist, not the resolved URLs.
+ *
+ * screenshots : images live at  src/assets/screenshots/{slug}/*.{jpg,jpeg,png,webp,avif}
+ * video       : video lives at  src/assets/videos/{slug}.mp4   (null = no video section)
+ * iframe      : derived from   live URL (null live = no iframe section)
+ */
+
 export const PROJECTS = [
   {
     id:          '01',
@@ -5,14 +17,17 @@ export const PROJECTS = [
     title:       'Rizara Luxe',
     tagline:     'Premium jewelry e-commerce brand — founded, designed, and built end-to-end.',
     description: 'Built and scaled a premium jewelry brand from zero — including the men\'s line Rira Men. End-to-end ownership: product design, pricing strategy, inventory management, and customer experience. Deployed a high-conversion React storefront with optimized UI/UX, product storytelling, and distinct brand positioning. Also handled marketing, content, and brand identity.',
-    tags:        ['React', 'Tailwind CSS', 'E-Commerce', 'Founder'],
-    stack:       ['React', 'Tailwind CSS'],
+    tags:        ['React', 'Tailwind CSS', 'E-Commerce', 'Founder', 'Razorpay API', 'Supabase'],
+    stack:       ['React', 'Tailwind CSS', 'ExpressJS', 'Razorpay API', 'Supabase'],
     type:        'Founder & Developer',
     client:      null,
     status:      'Live',
     year:        '2025',
-    live:        'https://srivas-saksham.github.io/Rizara/',
-    github:      'https://github.com/srivas-saksham/Rizara',
+    live:        'https://www.rizara.in/',
+    github:      'https://github.com/srivas-saksham/The-Petal-Pouches',
+    // media
+    hasVideo:    true,   // expects src/assets/videos/rizara-luxe.mp4
+    accentColor: 'rgba(212, 55, 175, 0.15)',   // pink tint
   },
   {
     id:          '02',
@@ -20,14 +35,16 @@ export const PROJECTS = [
     title:       'Vyan Security',
     tagline:     'Client web platform for a professional security services firm.',
     description: 'Modern, responsive website for Vyan Security — a professional guard services company operating across India. Integrated an AI-powered assistant for instant client support and an email-based query system for direct communication. Highlights certified personnel, real-world threat training, and flexible security solutions for events, businesses, and residences.',
-    tags:        ['React', 'AI Integration', 'Client Project', 'Email System'],
+    tags:        ['React', 'Chatbot Integration', 'Client Project', 'Email System'],
     stack:       ['React', 'Tailwind CSS', 'AI Chatbot', 'Email API'],
     type:        'Client Project',
     client:      'Vyan Security',
     status:      'Live',
     year:        '2025',
-    live:        'https://srivas-saksham.github.io/VyanSecurity/',
-    github:      'https://github.com/srivas-saksham/VyanSecurity',
+    live:        'https://vyan-security.vercel.app/',
+    github:      'https://srivas-saksham.github.io/Vyan-Security/',
+    hasVideo:    true,
+    accentColor: 'rgba(59, 130, 246, 0.12)',   // steel-blue
   },
   {
     id:          '03',
@@ -39,10 +56,12 @@ export const PROJECTS = [
     stack:       ['React', 'FastAPI', 'Python', 'REST APIs', 'Async Processing'],
     type:        'Personal Project',
     client:      null,
-    status:      'In Progress',
+    status:      'Live',
     year:        '2025',
-    live:        null,
+    live:        'https://docslayer.vercel.app/',
     github:      'https://github.com/srivas-saksham/DocSlayer',
+    hasVideo:    true,
+    accentColor: 'rgba(241, 184, 99, 0.12)',   // indigo
   },
   {
     id:          '04',
@@ -54,10 +73,12 @@ export const PROJECTS = [
     stack:       ['React', 'Relay AI Automation', 'Airtable', 'REST APIs'],
     type:        'Internship Project',
     client:      'IBM Summer Internship',
-    status:      'In Progress',
+    status:      'Live',
     year:        '2025',
-    live:        null,
-    github:      'https://github.com/srivas-saksham/PathForge',
+    live:        'https://srivas-saksham.github.io/PathForge-Roadmap/',
+    github:      'https://github.com/srivas-saksham/PathForge-Roadmap',
+    hasVideo:    true,
+    accentColor: 'rgba(16, 185, 129, 0.12)',   // emerald
   },
   {
     id:          '05',
@@ -71,8 +92,10 @@ export const PROJECTS = [
     client:      null,
     status:      'In Progress',
     year:        '2025',
-    live:        null,
+    live:        null,   // no iframe — no live URL
     github:      null,
+    hasVideo:    false,  // no video
+    accentColor: 'rgba(245, 158, 11, 0.12)',   // amber
   },
   {
     id:          '06',
@@ -88,5 +111,7 @@ export const PROJECTS = [
     year:        '2025',
     live:        'https://srivas-saksham.github.io/SancturiaWildlife/',
     github:      'https://github.com/srivas-saksham/SancturiaWildlife',
+    hasVideo:    true,
+    accentColor: 'rgba(34, 197, 94, 0.10)',    // forest-green
   },
 ]
