@@ -26,7 +26,7 @@ export const PROJECTS = [
     live:        'https://www.rizara.in/',
     github:      'https://github.com/srivas-saksham/The-Petal-Pouches',
     // media
-    hasVideo:    true,   // expects src/assets/videos/rizara-luxe.mp4
+    hasVideo:    false,   // expects src/assets/videos/rizara-luxe.mp4
     accentColor: 'rgba(212, 55, 126, 0.15)',   // pink tint
   },
   {
@@ -43,7 +43,7 @@ export const PROJECTS = [
     year:        '2025',
     live:        'https://vyan-security.vercel.app/',
     github:      'https://srivas-saksham.github.io/Vyan-Security/',
-    hasVideo:    true,
+    hasVideo:    false,
     accentColor: 'rgba(59, 130, 246, 0.12)',   // steel-blue
   },
   {
@@ -60,7 +60,7 @@ export const PROJECTS = [
     year:        '2025',
     live:        'https://docslayer.vercel.app/',
     github:      'https://github.com/srivas-saksham/DocSlayer',
-    hasVideo:    true,
+    hasVideo:    false,
     accentColor: 'rgba(255, 242, 221, 0.12)',   // brown
   },
   {
@@ -77,7 +77,7 @@ export const PROJECTS = [
     year:        '2025',
     live:        'https://srivas-saksham.github.io/PathForge-Roadmap/',
     github:      'https://github.com/srivas-saksham/PathForge-Roadmap',
-    hasVideo:    true,
+    hasVideo:    false,
     accentColor: 'rgba(16, 185, 129, 0.12)',   // emerald
   },
   {
@@ -109,9 +109,9 @@ export const PROJECTS = [
     client:      null,
     status:      'Live',
     year:        '2025',
-    live:        'https://srivas-saksham.github.io/SancturiaWildlife/',
+    live:        'https://sancturiawildlife.page.gd/?i=1',
     github:      'https://github.com/srivas-saksham/SancturiaWildlife',
-    hasVideo:    true,
+    hasVideo:    false,
     accentColor: 'rgba(34, 197, 94, 0.10)',    // forest-green
   },
 ]

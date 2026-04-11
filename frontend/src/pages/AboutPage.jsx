@@ -3,6 +3,7 @@ import SEO          from '@components/seo/SEO'
 import SectionLabel from '@components/ui/SectionLabel'
 import Tag          from '@components/ui/Tag'
 import Button       from '@components/ui/Button'
+import SceneBackground from '@components/layout/SceneBackground'
 
 // ── New components wired in ───────────────────────────────────────────────────
 import AboutBio   from '@components/about/AboutBio'
@@ -72,8 +73,18 @@ export default function AboutPage() {
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section style={{ padding: 'clamp(4rem, 8vw, 8rem) 2.5rem' }}>
+        <SceneBackground
+          gridSize={72}
+          gridOpacity={0.11}
+          glow1Color="rgba(71,49,152,0.20)"
+          glow2Color="rgba(71,49,152,0.10)"
+          glow1Pos={{ top: '-10%', right: '-5%' }}
+          glow2Pos={{ bottom: '-20%', left: '-12%' }}
+          scanLine
+          parallaxStrength={0.9}
+        />
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <SectionLabel index="01" label="About" />
+          <SectionLabel index="02" label="About" />
 
           {/* Page title + bio copy — unchanged layout */}
           <div
@@ -141,7 +152,7 @@ export default function AboutPage() {
         borderTop:  '1px solid var(--border)',
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <SectionLabel index="02" label="Tech Stack" />
+          <SectionLabel index="I" label="Tech Stack" />
           {/* StackGrid replaces the inline category loop */}
           <StackGrid />
         </div>
@@ -154,7 +165,7 @@ export default function AboutPage() {
         borderTop:  '1px solid var(--border)',
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <SectionLabel index="03" label="Education" />
+          <SectionLabel index="II" label="Education" />
 
           <div data-gsap="fade-up" style={{
             display:   'flex',
@@ -208,7 +219,7 @@ export default function AboutPage() {
         borderTop:  '1px solid var(--border)',
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <SectionLabel index="04" label="Achievements" />
+          <SectionLabel index="III" label="Achievements" />
           <Timeline items={ACHIEVEMENTS} />
         </div>
       </section>
