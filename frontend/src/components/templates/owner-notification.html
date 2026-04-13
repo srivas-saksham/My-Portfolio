@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="supported-color-schemes" content="dark" />
+  <title>New Inquiry — {{ params.senderName }}</title>
+
+  <style type="text/css">
+    body, table, td, a { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+    table, td { mso-table-lspace:0pt; mso-table-rspace:0pt; }
+    img { -ms-interpolation-mode:bicubic; border:0; height:auto; line-height:100%; outline:none; text-decoration:none; }
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0 !important; padding:0 !important;
+      background-color:#080808 !important;
+      width:100% !important;
+      font-family:'Courier New', Courier, monospace;
+    }
+
+    a[x-apple-data-detectors] { color:inherit !important; text-decoration:none !important; }
+
+    @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&display=swap');
+
+    @media screen and (max-width:600px) {
+      .email-container  { width:100% !important; }
+      .outer-pad        { padding:16px 8px !important; }
+      .cell-pad         { padding:18px 16px !important; }
+      .cell-pad-sm      { padding:12px 16px !important; }
+      .accent-col       { display:none !important; width:0 !important; }
+      .hero-title       { font-size:26px !important; }
+      .sender-label     { width:44px !important; }
+      .btn-primary      { display:block !important; width:100% !important; text-align:center !important; border-radius:6px !important; }
+      .btn-ghost-td     { display:block !important; padding-left:0 !important; padding-top:10px !important; }
+      .btn-ghost        { display:block !important; width:100% !important; text-align:center !important; border-radius:6px !important; }
+      .footer-left      { display:block !important; width:100% !important; padding-bottom:6px !important; }
+      .footer-right     { display:block !important; width:100% !important; text-align:left !important; }
+      .ts-right         { display:none !important; }
+      .pref-row td      { display:block !important; width:100% !important; border-right:none !important; border-bottom:1px solid #2a2a2a !important; }
+      .pref-row td:last-child { border-bottom:none !important; }
+    }
+  </style>
+</head>
+
+<body style="margin:0;padding:0;background-color:#080808;width:100%;">
+
+  <div style="display:none;font-size:1px;color:#080808;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
+    New inquiry from {{ params.senderName }} — {{ params.timestamp }}
+  </div>
+
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#080808;">
+    <tr>
+      <td class="outer-pad" align="center" style="padding:32px 16px;">
+        <table class="email-container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="620" style="max-width:620px;width:100%;">
+
+          <!-- ══ HEADER ══ -->
+          <tr>
+            <td>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td class="accent-col" width="3" style="background-color:#473198;border-radius:2px 0 0 0;">&nbsp;</td>
+                  <td class="cell-pad" style="background-color:#0f0f0f;padding:20px 28px;border-top:1px solid #464646;border-right:1px solid #464646;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td>
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                            <tr>
+                              <td style="background-color:#473198;border-radius:6px;padding:6px 10px;">
+                                <span style="font-family:'Courier New',monospace;font-size:13px;font-weight:700;color:#fff;letter-spacing:-0.02em;line-height:1;">S</span>
+                              </td>
+                              <td style="padding-left:12px;vertical-align:middle;">
+                                <span style="font-family:'Courier New',monospace;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#f5f5f5;">Saksham</span><span style="font-family:'Courier New',monospace;font-size:10px;color:#717171;margin-left:2px;">.</span>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                        <td align="right" style="vertical-align:middle;">
+                          <span style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#473198;">// Inbox</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ══ HERO ══ -->
+          <tr>
+            <td>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td class="accent-col" width="3" style="background-color:#1a1266;">&nbsp;</td>
+                  <td class="cell-pad" style="background-color:#0a0a0a;padding:36px 28px 28px;border-right:1px solid #464646;border-bottom:1px solid #464646;">
+
+                    <!-- Status pill -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:20px;">
+                      <tr>
+                        <td style="background-color:rgba(71,49,152,0.12);border:1px solid rgba(71,49,152,0.35);border-radius:9999px;padding:5px 14px;">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                            <tr>
+                              <td style="padding-right:7px;vertical-align:middle;">
+                                <div style="width:6px;height:6px;border-radius:50%;background-color:#473198;display:inline-block;"></div>
+                              </td>
+                              <td>
+                                <span style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(138,122,255,0.9);">New Inquiry Received</span>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Hero headline — sender's first name -->
+                    <div class="hero-title" style="font-family:Georgia,'Times New Roman',serif;font-size:38px;font-weight:700;letter-spacing:-0.03em;line-height:0.92;color:#f5f5f5;margin-bottom:6px;">
+                      {{ params.senderFirstName }}
+                    </div>
+                    <div class="hero-title" style="font-family:Georgia,'Times New Roman',serif;font-size:38px;font-weight:300;font-style:italic;letter-spacing:-0.03em;line-height:0.92;color:transparent;-webkit-text-stroke:1px rgba(245,245,245,0.3);margin-bottom:24px;padding-left:18px;">
+                      reached out.
+                    </div>
+
+                    <!-- Timestamp strip -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="background-color:rgba(71,49,152,0.06);border:1px solid rgba(71,49,152,0.18);padding:10px 16px;">
+                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                              <td><span style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(71,49,152,0.7);">&#9679; Received</span></td>
+                              <td class="ts-right" align="right"><span style="font-family:'Courier New',monospace;font-size:9px;color:#717171;letter-spacing:0.06em;">{{ params.timestamp }} IST</span></td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                    <div style="margin-top:8px;">
+                      <span style="font-family:'Courier New',monospace;font-size:9px;color:#717171;letter-spacing:0.06em;">{{ params.timestamp }} IST</span>
+                    </div>
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ══ SENDER DETAILS ══ -->
+          <tr>
+            <td>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td class="accent-col" width="3" style="background-color:#473198;">&nbsp;</td>
+                  <td class="cell-pad" style="background-color:#171717;padding:24px 28px;border-right:1px solid #464646;border-bottom:1px solid #464646;">
+
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:16px;">
+                      <tr>
+                        <td style="vertical-align:middle;padding-right:10px;white-space:nowrap;">
+                          <span style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#717171;">Sender</span>
+                        </td>
+                        <td width="100%"><div style="height:1px;background-color:#464646;"></div></td>
+                      </tr>
+                    </table>
+
+                    <!-- Name -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:14px;">
+                      <tr>
+                        <td class="sender-label" width="56" style="vertical-align:top;padding-top:2px;">
+                          <span style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#717171;">Name</span>
+                        </td>
+                        <td>
+                          <span style="font-family:'Courier New',monospace;font-size:13px;color:#f5f5f5;letter-spacing:0.02em;font-weight:500;word-break:break-word;">{{ params.senderName }}</span>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Email -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:14px;">
+                      <tr>
+                        <td class="sender-label" width="56" style="vertical-align:top;padding-top:2px;">
+                          <span style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#717171;">Email</span>
+                        </td>
+                        <td>
+                          <a href="mailto:{{ params.senderEmail }}" style="font-family:'Courier New',monospace;font-size:13px;color:#8a7aff;letter-spacing:0.02em;text-decoration:none;border-bottom:1px solid rgba(138,122,255,0.3);padding-bottom:1px;word-break:break-all;">{{ params.senderEmail }}</a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Phone — injected as full HTML row or empty string -->
+                    {{ params.phoneRow }}
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ══ CONTACT PREFERENCES ══ -->
+          <tr>
+            <td>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td class="accent-col" width="3" style="background-color:#473198;opacity:0.5;">&nbsp;</td>
+                  <td style="background-color:#0f0f0f;border-right:1px solid #464646;border-bottom:1px solid #464646;">
+
+                    <!-- Section label -->
+                    <div style="padding:18px 28px 0;">
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                          <td style="vertical-align:middle;padding-right:10px;white-space:nowrap;">
+                            <span style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#717171;">Contact preferences</span>
+                          </td>
+                          <td width="100%"><div style="height:1px;background-color:#464646;"></div></td>
+                        </tr>
+                      </table>
+                    </div>
+
+                    <!-- Two-column preference pills -->
+                    <table class="pref-row" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+
+                        <!-- WhatsApp preference -->
+                        <td style="padding:14px 28px 18px;border-right:1px solid #2a2a2a;vertical-align:top;width:50%;">
+                          <div style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#717171;margin-bottom:8px;">
+                            Prefers WhatsApp?
+                          </div>
+                          <div style="display:inline-block;padding:5px 14px;border-radius:9999px;font-family:'Courier New',monospace;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background-color:{{ params.whatsAppBg }};border:{{ params.whatsAppBorder }};color:{{ params.whatsAppColor }};">
+                            {{ params.whatsAppLabel }}
+                          </div>
+                        </td>
+
+                        <!-- Call preference -->
+                        <td style="padding:14px 28px 18px;vertical-align:top;width:50%;">
+                          <div style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#717171;margin-bottom:8px;">
+                            Wants a call?
+                          </div>
+                          <div style="display:inline-block;padding:5px 14px;border-radius:9999px;font-family:'Courier New',monospace;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background-color:{{ params.callBg }};border:{{ params.callBorder }};color:{{ params.callColor }};">
+                            {{ params.callLabel }}
+                          </div>
+                        </td>
+
+                      </tr>
+                    </table>
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ══ MESSAGE ══ -->
+          <tr>
+            <td>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td class="accent-col" width="3" style="background-color:#2a1d5e;">&nbsp;</td>
+                  <td class="cell-pad" style="background-color:#0f0f0f;padding:24px 28px;border-right:1px solid #464646;border-bottom:1px solid #464646;">
+
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom:16px;">
+                      <tr>
+                        <td style="vertical-align:middle;padding-right:10px;white-space:nowrap;">
+                          <span style="font-family:'Courier New',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#717171;">Message</span>
+                        </td>
+                        <td width="100%"><div style="height:1px;background-color:#464646;"></div></td>
+                      </tr>
+                    </table>
+
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="background-color:#171717;border:1px solid #464646;border-left:3px solid rgba(71,49,152,0.6);padding:20px 22px;">
+                          <p style="font-family:'Courier New',monospace;font-size:12px;color:#7b7b7b;line-height:2.1;margin:0;white-space:pre-wrap;word-break:break-word;">{{ params.message }}</p>
+                        </td>
+                      </tr>
+                    </table>
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ══ CTA ══ -->
+          <tr>
+            <td>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td class="accent-col" width="3" style="background-color:#080808;">&nbsp;</td>
+                  <td class="cell-pad" style="background-color:#080808;padding:24px 28px;border-right:1px solid #464646;border-bottom:1px solid #464646;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td style="border-radius:9999px;background-color:#f5f5f5;" align="center">
+                          <a class="btn-primary" href="{{ params.replyUrl }}" target="_blank"
+                            style="display:inline-block;font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#080808;text-decoration:none;padding:12px 24px;border-radius:9999px;mso-padding-alt:12px 24px;">
+                            Reply to {{ params.senderFirstName }} &rarr;
+                          </a>
+                        </td>
+                        <td class="btn-ghost-td" style="padding-left:10px;">
+                          <a class="btn-ghost" href="mailto:{{ params.senderEmail }}" target="_blank"
+                            style="display:inline-block;font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#7b7b7b;text-decoration:none;padding:11px 20px;border-radius:9999px;border:1px solid #464646;">
+                            Open in Mail
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ══ FOOTER ══ -->
+          <tr>
+            <td>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td class="accent-col" width="3" style="background-color:#080808;">&nbsp;</td>
+                  <td class="cell-pad-sm" style="background-color:#080808;padding:18px 28px;border-top:1px solid #464646;border-right:1px solid #464646;border-bottom:1px solid #464646;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td class="footer-left">
+                          <span style="font-family:'Courier New',monospace;font-size:9px;color:#464646;letter-spacing:0.06em;">Saksham Srivastava &middot; New Delhi, India &middot; UTC+5:30</span>
+                        </td>
+                        <td class="footer-right" align="right">
+                          <span style="font-family:'Courier New',monospace;font-size:9px;color:#464646;letter-spacing:0.04em;">via Brevo &mdash; do not reply here</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Bottom gradient -->
+          <tr>
+            <td height="3" style="background:linear-gradient(90deg,#473198,#8a7aff,#473198);font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
