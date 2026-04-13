@@ -202,7 +202,7 @@ export default function ContactPage() {
             zIndex:           0,
           }}
         >
-          04
+          03
         </div>
 
         {/* Floating decorative accents */}
@@ -216,7 +216,7 @@ export default function ContactPage() {
         }}>
 
           {/* Section label */}
-          <SectionLabel index="04" label="Contact" />
+          <SectionLabel index="03" label="Contact" />
 
           {/* Display title — same split-line reveal as HeroSection */}
           <div

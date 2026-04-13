@@ -365,7 +365,7 @@ export default function ContactForm() {
             <FlipToggle
               value={prefWhatsApp}
               onChange={setPrefWhatsApp}
-              label="Prefer WhatsApp contact over emails?"
+              label="Prefer whatsApp contact over emails?"
             />
           </div>
 
