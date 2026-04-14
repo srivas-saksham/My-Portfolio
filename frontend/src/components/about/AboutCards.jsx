@@ -23,6 +23,8 @@ function Card({ card, isHovered, onEnter, onLeave }) {
     <div
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
+      onTouchStart={onEnter}
+      onTouchEnd={onLeave}
       style={{
         display:        'grid',
         gridTemplateColumns: '3rem 1fr',
@@ -33,6 +35,7 @@ function Card({ card, isHovered, onEnter, onLeave }) {
         transition:     'opacity 0.2s ease',
         opacity:        isHovered ? 1 : 0.72,
       }}
+      className="about-card-row"
     >
       {/* Index */}
       <span style={{
@@ -51,7 +54,7 @@ function Card({ card, isHovered, onEnter, onLeave }) {
       <div>
         <h3 style={{
           fontFamily:    'var(--font-display)',
-          fontSize:      'clamp(1rem, 2vw, 1.2rem)',
+          fontSize:      'clamp(0.95rem, 2vw, 1.2rem)',
           fontWeight:    600,
           letterSpacing: '-0.02em',
           lineHeight:    1.15,
@@ -80,21 +83,41 @@ export default function AboutCards() {
   const [hoveredIdx, setHoveredIdx] = useState(null)
 
   return (
-    <div
-      data-gsap="fade-up"
-      style={{
-        borderTop: '1px solid var(--border)',
-      }}
-    >
-      {CARDS.map((card, i) => (
-        <Card
-          key={card.index}
-          card={card}
-          isHovered={hoveredIdx === i}
-          onEnter={() => setHoveredIdx(i)}
-          onLeave={() => setHoveredIdx(null)}
-        />
-      ))}
-    </div>
+    <>
+      <div
+        data-gsap="fade-up"
+        className="about-cards-container"
+        style={{
+          borderTop: '1px solid var(--border)',
+        }}
+      >
+        {CARDS.map((card, i) => (
+          <Card
+            key={card.index}
+            card={card}
+            isHovered={hoveredIdx === i}
+            onEnter={() => setHoveredIdx(i)}
+            onLeave={() => setHoveredIdx(null)}
+          />
+        ))}
+      </div>
+
+      <style>{`
+        /*
+          On mobile/tablet: AboutCards is stacked below the title
+          (handled by the parent grid collapsing to 1 column).
+          No layout changes needed here — the cards themselves are
+          already single-column rows and work well at any width.
+          We just tweak padding and font sizes slightly.
+        */
+        @media (max-width: 639px) {
+          .about-card-row {
+            grid-template-columns: 2.25rem 1fr !important;
+            gap: 1rem !important;
+            padding: 1.15rem 0 !important;
+          }
+        }
+      `}</style>
+    </>
   )
 }

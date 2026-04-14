@@ -48,6 +48,8 @@ function FilterBar({ active, onChange }) {
               cursor:        'pointer',
               transition:    'all 0.18s ease',
               whiteSpace:    'nowrap',
+              /* Touch-friendly minimum tap area */
+              minHeight:     '36px',
             }}
           >
             {cat}
@@ -66,7 +68,6 @@ function TechCard({ name, icon, devicon, color }) {
   ? `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${devicon}/${devicon}-original.svg`
   : null
 
-  // color is a 6-char hex like 'F05032' — derive tinted bg and border from it
   const bgColor     = color ? hexToRgba(color, 0.10) : 'rgba(255,255,255,0.03)'
   const borderColor = color ? hexToRgba(color, 0.35) : 'rgba(255,255,255,0.1)'
   const iconBg      = color ? hexToRgba(color, 0.18) : 'rgba(255,255,255,0.05)'
@@ -150,10 +151,8 @@ function CategorySection({ category, items }) {
   const count = String(items.length).padStart(2, '0')
 
   return (
-    // data-gsap="fade-up" intentionally removed — GSAP ScrollTrigger fires
-    // once on mount and sets opacity:0. Re-rendered sections (after a filter
-    // change) never get re-animated and stay invisible forever.
     <div
+      className="stack-category-section"
       style={{
         display:             'grid',
         gridTemplateColumns: '120px 1fr',
@@ -163,7 +162,7 @@ function CategorySection({ category, items }) {
       }}
     >
       {/* Left — category meta */}
-      <div style={{ paddingRight: '1.5rem', paddingTop: '2px' }}>
+      <div className="stack-category-label" style={{ paddingRight: '1.5rem', paddingTop: '2px' }}>
         <span
           style={{
             display:       'block',
@@ -193,6 +192,7 @@ function CategorySection({ category, items }) {
 
       {/* Right — cards */}
       <div
+        className="stack-cards-grid"
         style={{
           display:             'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
@@ -203,6 +203,41 @@ function CategorySection({ category, items }) {
           <TechCard key={s.name} name={s.name} icon={s.icon} devicon={s.devicon} color={s.color} />
         ))}
       </div>
+
+      <style>{`
+        /* Mobile: collapse to single column — label on top, cards below */
+        @media (max-width: 639px) {
+          .stack-category-section {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem !important;
+          }
+
+          .stack-category-label {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            padding-right: 0 !important;
+            padding-top: 0 !important;
+          }
+
+          /* On mobile, cards use smaller min-width to fit 2+ per row */
+          .stack-cards-grid {
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)) !important;
+            gap: 6px !important;
+          }
+        }
+
+        /* Tablet: reduce label column width */
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .stack-category-section {
+            grid-template-columns: 90px 1fr !important;
+          }
+
+          .stack-cards-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

@@ -3,10 +3,11 @@ import { useRef, useState } from 'react'
 /**
  * Timeline
  * Vertical timeline for achievements, certifications, and career milestones.
- * Accepts an array of event items or falls back to a default dataset.
  *
- * Item shape: { year, title, body, tag, type }
- * type values: 'internship' | 'certification' | 'award' | 'milestone'
+ * Responsive:
+ *   Desktop:  3-col grid (year | spine+dot | content) — 80px + 20px + 1fr
+ *   Mobile:   2-col grid (spine+dot | content only) — year moved into content header
+ *             This prevents year column from being too cramped on small screens.
  */
 
 const TYPE_CONFIG = {
@@ -21,102 +22,196 @@ function TimelineItem({ item, isLast }) {
   const cfg = TYPE_CONFIG[item.type] ?? TYPE_CONFIG.milestone
 
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display:  'grid',
-        gridTemplateColumns: '80px 20px 1fr',
-        gap:      '0 1.5rem',
-        position: 'relative',
-      }}
-    >
-      {/* Year */}
-      <div style={{ paddingTop: '0.1rem', textAlign: 'right' }}>
-        <span style={{
-          fontFamily:    'var(--font-mono)',
-          fontSize:      '0.62rem',
-          color:         hovered ? 'var(--text)' : 'var(--ghost)',
-          letterSpacing: '0.06em',
-          transition:    'color 0.25s ease',
-        }}>
-          {item.year}
-        </span>
-      </div>
+    <>
+      {/* Desktop layout */}
+      <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="timeline-item-desktop"
+        style={{
+          display:  'grid',
+          gridTemplateColumns: '80px 20px 1fr',
+          gap:      '0 1.5rem',
+          position: 'relative',
+        }}
+      >
+        {/* Year */}
+        <div style={{ paddingTop: '0.1rem', textAlign: 'right' }}>
+          <span style={{
+            fontFamily:    'var(--font-mono)',
+            fontSize:      '0.62rem',
+            color:         hovered ? 'var(--text)' : 'var(--ghost)',
+            letterSpacing: '0.06em',
+            transition:    'color 0.25s ease',
+          }}>
+            {item.year}
+          </span>
+        </div>
 
-      {/* Spine + Dot */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {/* Dot */}
-        <div style={{
-          width:        '8px',
-          height:       '8px',
-          borderRadius: '50%',
-          background:   cfg.dot,
-          flexShrink:   0,
-          marginTop:    '0.15rem',
-          boxShadow:    hovered ? `0 0 12px ${cfg.dot}` : 'none',
-          transition:   'box-shadow 0.3s ease',
-          zIndex:       1,
-        }} />
-        {/* Line */}
-        {!isLast && (
+        {/* Spine + Dot */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{
-            flex:       1,
-            width:      '1px',
-            background: 'var(--border)',
-            marginTop:  '6px',
-            marginBottom:'0',
-            minHeight:  '2.5rem',
+            width:        '8px',
+            height:       '8px',
+            borderRadius: '50%',
+            background:   cfg.dot,
+            flexShrink:   0,
+            marginTop:    '0.15rem',
+            boxShadow:    hovered ? `0 0 12px ${cfg.dot}` : 'none',
+            transition:   'box-shadow 0.3s ease',
+            zIndex:       1,
           }} />
-        )}
+          {!isLast && (
+            <div style={{
+              flex:       1,
+              width:      '1px',
+              background: 'var(--border)',
+              marginTop:  '6px',
+              minHeight:  '2.5rem',
+            }} />
+          )}
+        </div>
+
+        {/* Content */}
+        <div style={{ paddingBottom: isLast ? 0 : '2.5rem' }}>
+          <span style={{
+            display:       'inline-block',
+            fontFamily:    'var(--font-mono)',
+            fontSize:      '0.52rem',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color:         cfg.dot,
+            marginBottom:  '0.4rem',
+          }}>
+            {item.tag ?? cfg.label}
+          </span>
+
+          <h4 style={{
+            fontFamily:    'var(--font-display)',
+            fontSize:      'clamp(1rem, 1.8vw, 1.2rem)',
+            fontWeight:    600,
+            letterSpacing: '-0.02em',
+            lineHeight:    1.15,
+            color:         'var(--text)',
+            marginBottom:  '0.55rem',
+            transition:    'color 0.25s ease',
+          }}>
+            {item.title}
+          </h4>
+
+          <p style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize:   '0.72rem',
+            color:      'var(--muted)',
+            lineHeight: 1.85,
+            maxWidth:   '560px',
+          }}>
+            {item.body}
+          </p>
+        </div>
       </div>
 
-      {/* Content */}
-      <div style={{ paddingBottom: isLast ? 0 : '2.5rem' }}>
-        {/* Tag */}
-        <span style={{
-          display:       'inline-block',
-          fontFamily:    'var(--font-mono)',
-          fontSize:      '0.52rem',
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          color:         cfg.dot,
-          marginBottom:  '0.4rem',
+      {/* Mobile layout — year integrated into content */}
+      <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="timeline-item-mobile"
+        style={{ display: 'none' }}
+      >
+        <div style={{
+          display:  'grid',
+          gridTemplateColumns: '20px 1fr',
+          gap:      '0 1.25rem',
+          position: 'relative',
         }}>
-          {item.tag ?? cfg.label}
-        </span>
+          {/* Spine + Dot */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{
+              width:        '8px',
+              height:       '8px',
+              borderRadius: '50%',
+              background:   cfg.dot,
+              flexShrink:   0,
+              marginTop:    '0.15rem',
+              boxShadow:    hovered ? `0 0 12px ${cfg.dot}` : 'none',
+              transition:   'box-shadow 0.3s ease',
+              zIndex:       1,
+            }} />
+            {!isLast && (
+              <div style={{
+                flex:       1,
+                width:      '1px',
+                background: 'var(--border)',
+                marginTop:  '6px',
+                minHeight:  '2.5rem',
+              }} />
+            )}
+          </div>
 
-        {/* Title */}
-        <h4 style={{
-          fontFamily:    'var(--font-display)',
-          fontSize:      'clamp(1rem, 1.8vw, 1.2rem)',
-          fontWeight:    600,
-          letterSpacing: '-0.02em',
-          lineHeight:    1.15,
-          color:         'var(--text)',
-          marginBottom:  '0.55rem',
-          transition:    'color 0.25s ease',
-        }}>
-          {item.title}
-        </h4>
+          {/* Content with year inline */}
+          <div style={{ paddingBottom: isLast ? 0 : '2rem' }}>
+            {/* Year + tag row */}
+            <div style={{
+              display:      'flex',
+              alignItems:   'center',
+              gap:          '0.6rem',
+              marginBottom: '0.4rem',
+              flexWrap:     'wrap',
+            }}>
+              <span style={{
+                fontFamily:    'var(--font-mono)',
+                fontSize:      '0.58rem',
+                color:         'var(--ghost)',
+                letterSpacing: '0.06em',
+              }}>
+                {item.year}
+              </span>
+              <span style={{
+                fontFamily:    'var(--font-mono)',
+                fontSize:      '0.52rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color:         cfg.dot,
+              }}>
+                · {item.tag ?? cfg.label}
+              </span>
+            </div>
 
-        {/* Body */}
-        <p style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize:   '0.72rem',
-          color:      'var(--muted)',
-          lineHeight: 1.85,
-          maxWidth:   '560px',
-        }}>
-          {item.body}
-        </p>
+            <h4 style={{
+              fontFamily:    'var(--font-display)',
+              fontSize:      'clamp(0.95rem, 4vw, 1.15rem)',
+              fontWeight:    600,
+              letterSpacing: '-0.02em',
+              lineHeight:    1.15,
+              color:         'var(--text)',
+              marginBottom:  '0.5rem',
+            }}>
+              {item.title}
+            </h4>
+
+            <p style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize:   '0.7rem',
+              color:      'var(--muted)',
+              lineHeight: 1.8,
+            }}>
+              {item.body}
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <style>{`
+        @media (max-width: 639px) {
+          .timeline-item-desktop { display: none !important; }
+          .timeline-item-mobile  { display: block !important; }
+        }
+      `}</style>
+    </>
   )
 }
 
 export default function Timeline({ items }) {
-  // Default fallback data if no items prop is passed
   const data = items ?? [
     {
       year:  '2025',

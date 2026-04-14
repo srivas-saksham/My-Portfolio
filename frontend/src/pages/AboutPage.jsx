@@ -72,7 +72,7 @@ export default function AboutPage() {
       <SEO title={META.about.title} description={META.about.description} />
 
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section style={{ padding: 'clamp(4rem, 8vw, 8rem) 2.5rem' }}>
+      <section style={{ padding: 'clamp(4rem, 8vw, 8rem) 2.5rem' }} className="about-hero-section">
         <SceneBackground
           gridSize={72}
           gridOpacity={0.11}
@@ -86,7 +86,10 @@ export default function AboutPage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <SectionLabel index="02" label="About" />
 
-          {/* Page title + bio copy — unchanged layout */}
+          {/*
+            Desktop: 2-col grid (title left, cards right)
+            Mobile:  single column — title first, then CTA buttons, then cards below
+          */}
           <div
             style={{
               display:             'grid',
@@ -95,7 +98,7 @@ export default function AboutPage() {
               alignItems:          'start',
               marginBottom:        'clamp(3rem, 5vw, 5rem)',
             }}
-            className="about-grid"
+            className="about-hero-grid"
           >
             {/* Left — title */}
             <div>
@@ -103,7 +106,7 @@ export default function AboutPage() {
                 data-gsap="fade-up"
                 style={{
                   fontFamily:    'var(--font-display)',
-                  fontSize:      'clamp(3rem, 6vw, 5.5rem)',
+                  fontSize:      'clamp(2.6rem, 6vw, 5.5rem)',
                   fontWeight:    600,
                   letterSpacing: '-0.04em',
                   lineHeight:    0.9,
@@ -124,18 +127,22 @@ export default function AboutPage() {
               </h1>
 
               {/* CTA buttons */}
-              <div data-gsap="fade-up" style={{ marginTop: '2rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <div
+                data-gsap="fade-up"
+                style={{ marginTop: '2rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}
+                className="about-cta-buttons"
+              >
                 <Button href={SITE.resume}   variant="ghost" external>Resume ↓</Button>
                 <Button href={SITE.github}   variant="ghost" external>GitHub ↗</Button>
                 <Button href={SITE.linkedin} variant="ghost" external>LinkedIn ↗</Button>
               </div>
             </div>
 
-            {/* Right — specialization cards (AboutCards replaces the inline cards) */}
+            {/* Right — AboutCards */}
             <AboutCards />
           </div>
 
-          {/* Bio block — portrait + detail rows (AboutBio) */}
+          {/* Bio block — portrait + detail rows */}
           <div style={{
             paddingTop: 'clamp(2rem, 4vw, 3.5rem)',
             borderTop:  '1px solid var(--border)',
@@ -146,24 +153,29 @@ export default function AboutPage() {
       </section>
 
       {/* ── Stack ─────────────────────────────────────────────── */}
-      <section style={{
-        padding:    'clamp(4rem, 6vw, 6rem) 2.5rem',
-        background: 'var(--bg-1)',
-        borderTop:  '1px solid var(--border)',
-      }}>
+      <section
+        style={{
+          padding:    'clamp(4rem, 6vw, 6rem) 2.5rem',
+          background: 'var(--bg-1)',
+          borderTop:  '1px solid var(--border)',
+        }}
+        className="about-stack-section"
+      >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <SectionLabel index="I" label="Tech Stack" />
-          {/* StackGrid replaces the inline category loop */}
           <StackGrid />
         </div>
       </section>
 
       {/* ── Education ─────────────────────────────────────────── */}
-      <section style={{
-        padding:    'clamp(4rem, 6vw, 6rem) 2.5rem',
-        background: 'var(--bg-base)',
-        borderTop:  '1px solid var(--border)',
-      }}>
+      <section
+        style={{
+          padding:    'clamp(4rem, 6vw, 6rem) 2.5rem',
+          background: 'var(--bg-base)',
+          borderTop:  '1px solid var(--border)',
+        }}
+        className="about-edu-section"
+      >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <SectionLabel index="II" label="Education" />
 
@@ -186,7 +198,7 @@ export default function AboutPage() {
             <div>
               <h3 style={{
                 fontFamily:    'var(--font-display)',
-                fontSize:      '1.4rem',
+                fontSize:      'clamp(1.15rem, 3vw, 1.4rem)',
                 fontWeight:    600,
                 letterSpacing: '-0.02em',
                 color:         'var(--text)',
@@ -197,9 +209,10 @@ export default function AboutPage() {
               </h3>
               <p style={{
                 fontFamily:   'var(--font-mono)',
-                fontSize:     '0.75rem',
+                fontSize:     '0.72rem',
                 color:        'var(--muted)',
                 marginBottom: '0.5rem',
+                lineHeight:   1.7,
               }}>
                 Vivekananda Institute of Professional Studies – TC, Indraprastha University, New Delhi
               </p>
@@ -212,17 +225,86 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Achievements — Timeline replaces the inline grid ──── */}
-      <section style={{
-        padding:    'clamp(4rem, 6vw, 6rem) 2.5rem',
-        background: 'var(--bg-1)',
-        borderTop:  '1px solid var(--border)',
-      }}>
+      {/* ── Achievements ──────────────────────────────────────── */}
+      <section
+        style={{
+          padding:    'clamp(4rem, 6vw, 6rem) 2.5rem',
+          background: 'var(--bg-1)',
+          borderTop:  '1px solid var(--border)',
+        }}
+        className="about-achievements-section"
+      >
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <SectionLabel index="III" label="Achievements" />
           <Timeline items={ACHIEVEMENTS} />
         </div>
       </section>
+
+      {/* ── Responsive styles ─────────────────────────────────── */}
+      <style>{`
+        /* ── Mobile (< 640px) ─────────────────────────────────── */
+        @media (max-width: 639px) {
+
+          /* Hero section padding */
+          .about-hero-section {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+          }
+
+          /* Stack, edu, achievements sections */
+          .about-stack-section,
+          .about-edu-section,
+          .about-achievements-section {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+          }
+
+          /*
+            Hero grid: single column
+            Order: title → CTA (stay inside left col) → cards
+          */
+          .about-hero-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+          }
+
+          /* CTA buttons: wrap and stack on very small screens */
+          .about-cta-buttons {
+            gap: 0.6rem !important;
+          }
+
+          /*
+            AboutBio inner grid is handled by its own component
+            but the bio-inner-grid override in globals.css handles it.
+            We ensure bio section doesn't overflow.
+          */
+        }
+
+        /* ── Tablet (640px – 1023px) ─────────────────────────── */
+        @media (min-width: 640px) and (max-width: 1023px) {
+
+          .about-hero-section {
+            padding-left: 1.75rem !important;
+            padding-right: 1.75rem !important;
+          }
+
+          .about-stack-section,
+          .about-edu-section,
+          .about-achievements-section {
+            padding-left: 1.75rem !important;
+            padding-right: 1.75rem !important;
+          }
+
+          /*
+            Tablet: collapse the 2-col hero grid to single column.
+            The about cards take up too much space on tablet otherwise.
+          */
+          .about-hero-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
+          }
+        }
+      `}</style>
     </PageWrapper>
   )
 }
