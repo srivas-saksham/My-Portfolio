@@ -165,7 +165,7 @@ export default function HeroSection() {
             mixBlendMode: 'lighten',
           }}
         >
-          <source src="/assets/portraits/vid.mp4" type="video/mp4" />
+          <source src="/assets/portraits/vidM.mp4" type="video/mp4" />
         </video>
 
         <div style={{
