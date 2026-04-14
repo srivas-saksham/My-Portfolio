@@ -1,17 +1,18 @@
 /**
- * ProjectDetailPage.jsx
+ * ProjectDetailPage.jsx — Fully Responsive
  *
- * Full project detail view. Sections rendered conditionally based on data:
+ * Desktop: unchanged — all sections, 2-col technical grid, full parallax logo
+ * Tablet:  same sections, narrowed padding, technical grid tightened
+ * Mobile:  single column throughout, technical metadata stacks above description,
+ *          screenshots gallery spans full width, simplified hero layout
  *
+ * Sections:
  *   01 — Hero             (always)
- *   02 — Screenshots      (if screenshots.length > 0)   ← SceneBackground ON
+ *   02 — Screenshots      (if screenshots.length > 0)
  *   03 — Video Demo       (if project.hasVideo && videoSrc exists)
  *   04 — Live Preview     (if project.live !== null)
- *   05 — Technical Detail (always — stack, description, tags)
- *   06 — Next Project     (always)                       ← SceneBackground ON
- *
- * SceneBackground: ONLY on Screenshots and Next Project sections.
- * Accent colours from project data bleed into borders, glows, and decorators.
+ *   05 — Technical Detail (always)
+ *   06 — Next Project     (always)
  */
 
 import { useParams, Link } from 'react-router-dom'
@@ -31,22 +32,25 @@ import ProjectLivePreview        from '@components/projects/ProjectLivePreview'
 import { useProjectAssets } from '@hooks/useProjectAssets'
 import { PROJECTS } from '@data/projects'
 
-// ─── Util: parse accent to a usable rgba string ───────────────────────────────
 function parseAccent(raw) {
   return raw ?? 'rgba(71,49,152,0.15)'
 }
 
-// ─── Section wrapper — no SceneBackground by default ─────────────────────────
-function Section({ children, bg = 'var(--bg-base)', style = {}, ...rest }) {
+// ─── Section wrapper ─────────────────────────────────────────────────────────
+function Section({ children, bg = 'var(--bg-base)', style = {}, className = '', ...rest }) {
   return (
-    <section style={{
-      padding:    'clamp(3.5rem, 6vw, 6rem) 2.5rem',
-      background: bg,
-      borderTop:  '1px solid var(--border)',
-      position:   'relative',
-      overflow:   'hidden',
-      ...style,
-    }} {...rest}>
+    <section
+      className={`detail-section ${className}`}
+      style={{
+        padding:    'clamp(3.5rem, 6vw, 6rem) 2.5rem',
+        background: bg,
+        borderTop:  '1px solid var(--border)',
+        position:   'relative',
+        overflow:   'hidden',
+        ...style,
+      }}
+      {...rest}
+    >
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         {children}
       </div>
@@ -54,19 +58,21 @@ function Section({ children, bg = 'var(--bg-base)', style = {}, ...rest }) {
   )
 }
 
-// ─── Screenshots section — SceneBackground ON ─────────────────────────────────
+// ─── Screenshots section ──────────────────────────────────────────────────────
 function ScreenshotsSection({ project, screenshots }) {
   const accent = parseAccent(project.accentColor)
 
   return (
-    <section style={{
-      padding:    'clamp(3.5rem, 6vw, 6rem) 2.5rem',
-      background: 'var(--bg-base)',
-      borderTop:  '1px solid var(--border)',
-      position:   'relative',
-      overflow:   'hidden',
-    }}>
-      {/* SceneBackground — only here */}
+    <section
+      className="detail-section screenshots-section"
+      style={{
+        padding:    'clamp(3.5rem, 6vw, 6rem) 2.5rem',
+        background: 'var(--bg-base)',
+        borderTop:  '1px solid var(--border)',
+        position:   'relative',
+        overflow:   'hidden',
+      }}
+    >
       <SceneBackground
         gridOpacity={0.08}
         glow1Color={accent.replace(/[\d.]+\)$/, '0.1)')}
@@ -79,8 +85,9 @@ function ScreenshotsSection({ project, screenshots }) {
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         <SectionLabel index="02" label="Screenshots" />
 
-        {/* Count + keyboard hint */}
+        {/* Count + keyboard hint — stacks on mobile */}
         <div
+          className="screenshots-header"
           data-gsap="fade-up"
           style={{
             display:        'flex',
@@ -98,18 +105,21 @@ function ScreenshotsSection({ project, screenshots }) {
             color:         'var(--ghost)',
             letterSpacing: '0.08em',
           }}>
-            {screenshots.length} screenshot{screenshots.length !== 1 ? 's' : ''} — click to expand fullscreen
+            {screenshots.length} screenshot{screenshots.length !== 1 ? 's' : ''} — click to expand
           </span>
           {screenshots.length > 1 && (
-            <span style={{
-              fontFamily:    'var(--font-mono)',
-              fontSize:      '0.75rem',
-              color:         'var(--ghost)',
-              letterSpacing: '0.08em',
-              display:       'flex',
-              alignItems:    'center',
-              gap:           '0.4rem',
-            }}>
+            <span
+              className="screenshots-kbd-hint"
+              style={{
+                fontFamily:    'var(--font-mono)',
+                fontSize:      '0.75rem',
+                color:         'var(--ghost)',
+                letterSpacing: '0.08em',
+                display:       'flex',
+                alignItems:    'center',
+                gap:           '0.4rem',
+              }}
+            >
               <kbd style={{
                 fontFamily:  'var(--font-mono)',
                 fontSize:    '0.72rem',
@@ -142,10 +152,10 @@ function ScreenshotsSection({ project, screenshots }) {
   )
 }
 
-// ─── Video section — no SceneBackground ──────────────────────────────────────
+// ─── Video section ───────────────────────────────────────────────────────────
 function VideoSection({ project, videoSrc }) {
   return (
-    <Section bg="var(--bg-1)">
+    <Section bg="var(--bg-1)" className="video-section">
       <SectionLabel index="03" label="Demo Video" />
 
       <div style={{
@@ -196,10 +206,10 @@ function VideoSection({ project, videoSrc }) {
   )
 }
 
-// ─── Live preview section — no SceneBackground ────────────────────────────────
+// ─── Live preview section ─────────────────────────────────────────────────────
 function LivePreviewSection({ project, sectionIndex }) {
   return (
-    <Section bg="var(--bg-base)">
+    <Section bg="var(--bg-base)" className="live-preview-section">
       <SectionLabel index={sectionIndex} label="Live Preview" />
 
       <div style={{
@@ -234,31 +244,35 @@ function LivePreviewSection({ project, sectionIndex }) {
   )
 }
 
-// ─── Technical details section — no SceneBackground ──────────────────────────
+// ─── Technical details section ────────────────────────────────────────────────
 function TechnicalSection({ project, sectionIndex }) {
   const accent = parseAccent(project.accentColor)
 
   return (
-    <Section bg="var(--bg-1)">
+    <Section bg="var(--bg-1)" className="technical-section">
       <SectionLabel index={sectionIndex} label="Technical Details" />
 
       <div
+        className="technical-grid"
         style={{
           display:             'grid',
           gridTemplateColumns: '220px 1fr',
           gap:                 'clamp(3rem, 6vw, 6rem)',
           alignItems:          'start',
         }}
-        className="project-body-grid"
       >
         {/* Left — sticky metadata */}
-        <div data-gsap="fade-up" style={{
-          position:      'sticky',
-          top:           '100px',
-          display:       'flex',
-          flexDirection: 'column',
-          gap:           '2rem',
-        }}>
+        <div
+          data-gsap="fade-up"
+          className="technical-meta"
+          style={{
+            position:      'sticky',
+            top:           '100px',
+            display:       'flex',
+            flexDirection: 'column',
+            gap:           '2rem',
+          }}
+        >
           {[
             { label: 'Stack',   value: project.stack.join('\n') },
             { label: 'Year',    value: project.year             },
@@ -310,7 +324,7 @@ function TechnicalSection({ project, sectionIndex }) {
         </div>
 
         {/* Right — description + tags */}
-        <div data-gsap="fade-up">
+        <div data-gsap="fade-up" className="technical-body">
           {/* Accent rule */}
           <div style={{
             width:        '2rem',
@@ -384,7 +398,7 @@ function TechnicalSection({ project, sectionIndex }) {
   )
 }
 
-// ─── Next project — SceneBackground ON ───────────────────────────────────────
+// ─── Next Project ─────────────────────────────────────────────────────────────
 function NextProject({ current }) {
   const currentIndex = PROJECTS.findIndex(p => p.slug === current.slug)
   const next = PROJECTS[(currentIndex + 1) % PROJECTS.length]
@@ -398,8 +412,9 @@ function NextProject({ current }) {
       background: 'var(--bg-base)',
       position:   'relative',
       overflow:   'hidden',
-    }}>
-      {/* SceneBackground — only here alongside Screenshots */}
+    }}
+    className="next-project-section"
+    >
       <SceneBackground
         gridOpacity={0.09}
         glow1Color="rgba(71,49,152,0.12)"
@@ -441,6 +456,7 @@ function NextProject({ current }) {
         <Link
           to={`/projects/${next.slug}`}
           data-cursor
+          className="next-project-link"
           style={{
             display:        'flex',
             alignItems:     'center',
@@ -508,7 +524,6 @@ export default function ProjectDetailPage() {
   const { slug } = useParams()
   const project  = PROJECTS.find(p => p.slug === slug)
 
-  // Always call the hook — conditionally skip rendering instead
   const { screenshots, videoSrc } = useProjectAssets(slug ?? '')
 
   if (!project) {
@@ -537,13 +552,11 @@ export default function ProjectDetailPage() {
     )
   }
 
-  // ── Determine which sections are active ──────────────────────────────────
   const hasScreenshots = screenshots.length > 0
   const showVideo      = project.hasVideo && !!videoSrc
   const showLive       = !!project.live
 
-  // ── Dynamic section index counter for SectionLabel ──────────────────────
-  let sectionIdx = 1   // 01 = hero
+  let sectionIdx = 1
 
   const screenshotIdx = hasScreenshots ? ++sectionIdx : null  // eslint-disable-line no-unused-vars
   const videoIdx      = showVideo      ? ++sectionIdx : null  // eslint-disable-line no-unused-vars
@@ -560,7 +573,10 @@ export default function ProjectDetailPage() {
       />
 
       {/* Back link */}
-      <div style={{ padding: '1.5rem 2.5rem 0', maxWidth: '1200px', margin: '0 auto' }}>
+      <div
+        className="back-link-bar"
+        style={{ padding: '1.5rem 2.5rem 0', maxWidth: '1200px', margin: '0 auto' }}
+      >
         <Link
           to="/projects"
           style={{
@@ -584,26 +600,115 @@ export default function ProjectDetailPage() {
       {/* 01 — Hero */}
       <ProjectDetailHero project={project} />
 
-      {/* 02 — Screenshots (conditional) — SceneBackground inside */}
+      {/* 02 — Screenshots */}
       {hasScreenshots && (
         <ScreenshotsSection project={project} screenshots={screenshots} />
       )}
 
-      {/* 03 — Video Demo (conditional) — no SceneBackground */}
+      {/* 03 — Video Demo */}
       {showVideo && (
         <VideoSection project={project} videoSrc={videoSrc} />
       )}
 
-      {/* 04 — Live Preview (conditional) — no SceneBackground */}
+      {/* 04 — Live Preview */}
       {showLive && (
         <LivePreviewSection project={project} sectionIndex={fmt(liveIdx)} />
       )}
 
-      {/* 05 — Technical Details — no SceneBackground */}
+      {/* 05 — Technical Details */}
       <TechnicalSection project={project} sectionIndex={fmt(techIdx)} />
 
-      {/* 06 — Next Project — SceneBackground inside */}
+      {/* 06 — Next Project */}
       <NextProject current={project} />
+
+      <style>{`
+        /* ── Mobile (< 640px) ──────────────────────────────────────────── */
+        @media (max-width: 639px) {
+
+          .detail-section {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+          }
+
+          .screenshots-section {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+          }
+
+          /* Hide keyboard navigation hint on mobile — touch devices don't use it */
+          .screenshots-kbd-hint {
+            display: none !important;
+          }
+
+          .back-link-bar {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+          }
+
+          /* Technical section: stack metadata above description on mobile */
+          .technical-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
+          }
+
+          /* Remove sticky positioning on mobile — it causes scroll issues */
+          .technical-meta {
+            position: static !important;
+            top: auto !important;
+            /* On mobile: display as a compact horizontal wrap instead of vertical stack */
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 1.25rem !important;
+          }
+
+          /* Links row inside metadata goes full width */
+          .technical-meta > div:last-child {
+            grid-column: 1 / -1 !important;
+          }
+
+          .next-project-section {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+          }
+
+          /* Next project: stack arrow below text on very small screens */
+          .next-project-link {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1.25rem !important;
+          }
+        }
+
+        /* ── Tablet (640px – 1023px) ────────────────────────────────────── */
+        @media (min-width: 640px) and (max-width: 1023px) {
+
+          .detail-section {
+            padding-left: 1.75rem !important;
+            padding-right: 1.75rem !important;
+          }
+
+          .screenshots-section {
+            padding-left: 1.75rem !important;
+            padding-right: 1.75rem !important;
+          }
+
+          .back-link-bar {
+            padding-left: 1.75rem !important;
+            padding-right: 1.75rem !important;
+          }
+
+          /* Technical grid: narrower meta column on tablet */
+          .technical-grid {
+            grid-template-columns: 160px 1fr !important;
+            gap: 2.5rem !important;
+          }
+
+          .next-project-section {
+            padding-left: 1.75rem !important;
+            padding-right: 1.75rem !important;
+          }
+        }
+      `}</style>
     </PageWrapper>
   )
 }

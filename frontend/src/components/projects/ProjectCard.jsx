@@ -1,22 +1,12 @@
 /**
- * ProjectCard.jsx
+ * ProjectCard.jsx — Fully Responsive
  *
- * Grid card for the projects overview page.
- * Primary visual: first screenshot from the project's asset folder.
- * Falls back to a styled placeholder if no screenshots are present.
+ * Desktop: unchanged — 3D tilt, radial glow, cover image with hover effects
+ * Tablet:  same as desktop (grid handles column count)
+ * Mobile:  no 3D tilt (doesn't work on touch), simplified hover states,
+ *          larger tap targets, cover image still present
  *
- * Equal-height fix:
- *   The grid cell itself must stretch the card to full height. This requires:
- *     1. The outer wrapper div in ProjectsPage uses `align-items: stretch`
- *        (CSS Grid default — so no change needed there).
- *     2. THIS component's root element must be `height: 100%` so it fills
- *        the full cell height regardless of content.
- *     3. The card body uses `flex: 1` on the tagline paragraph so the footer
- *        is always pinned to the bottom — giving visual alignment across cards
- *        in the same row even when title/tagline lengths differ.
- *
- * NOTE: data-gsap="fade-up" intentionally absent from root.
- * See ProjectsPage.jsx for explanation.
+ * Equal-height grid fix preserved across all breakpoints.
  */
 
 import { useState, useRef } from 'react'
@@ -61,7 +51,10 @@ export default function ProjectCard({ project, index = 0 }) {
   const { screenshots } = useProjectAssets(project.slug)
   const coverImage = screenshots[0]?.url ?? null
 
+  // ── Desktop-only 3D tilt ────────────────────────────────────────────────────
   const onMouseMove = (e) => {
+    // Guard: don't run on touch devices
+    if (!cardRef.current || window.matchMedia('(hover: none)').matches) return
     const rect = cardRef.current.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width
     const y = (e.clientY - rect.top)  / rect.height
@@ -75,8 +68,10 @@ export default function ProjectCard({ project, index = 0 }) {
 
   const onMouseLeave = () => {
     setHovered(false)
-    cardRef.current.style.transform =
-      'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0)'
+    if (cardRef.current) {
+      cardRef.current.style.transform =
+        'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0)'
+    }
   }
 
   const accent = project.accentColor ?? 'rgba(71,49,152,0.15)'
@@ -89,11 +84,9 @@ export default function ProjectCard({ project, index = 0 }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={onMouseLeave}
       style={{
-        // ── Equal-height key: fill the full grid cell height ──────────────
         display:        'flex',
         flexDirection:  'column',
         height:         '100%',
-        // ─────────────────────────────────────────────────────────────────
         background:     hovered ? 'rgba(255,255,255,0.028)' : 'var(--bg-2)',
         border:         `1px solid ${hovered ? 'rgba(255,255,255,0.09)' : 'var(--border)'}`,
         textDecoration: 'none',
@@ -107,10 +100,11 @@ export default function ProjectCard({ project, index = 0 }) {
         willChange:     'transform',
       }}
     >
-      {/* Radial glow */}
+      {/* Radial glow — desktop only */}
       <div
         ref={glowRef}
         aria-hidden="true"
+        className="card-glow-desktop"
         style={{
           position:      'absolute',
           width:         '220px',
@@ -140,14 +134,14 @@ export default function ProjectCard({ project, index = 0 }) {
         }}
       />
 
-      {/* Screenshot — fixed aspect ratio, never grows */}
+      {/* Screenshot */}
       <div style={{
         position:   'relative',
         width:      '100%',
         aspectRatio:'16/9',
         overflow:   'hidden',
         background: 'var(--bg-3)',
-        flexShrink: 0,   // ← never shrink the image area
+        flexShrink: 0,
       }}>
         {coverImage && !imgError ? (
           <>
@@ -217,13 +211,13 @@ export default function ProjectCard({ project, index = 0 }) {
         </div>
       </div>
 
-      {/* Card body — flex:1 so it fills remaining height */}
+      {/* Card body */}
       <div style={{
         position:      'relative',
         zIndex:        1,
         display:       'flex',
         flexDirection: 'column',
-        flex:          1,          // ← grows to fill remaining cell height
+        flex:          1,
         padding:       '1.5rem',
       }}>
         {/* Tags */}
@@ -249,19 +243,19 @@ export default function ProjectCard({ project, index = 0 }) {
           {project.title}
         </h3>
 
-        {/* Tagline — flex:1 pushes footer to bottom */}
+        {/* Tagline */}
         <p style={{
           fontFamily:   'var(--font-mono)',
           fontSize:     '0.68rem',
           color:        'var(--muted)',
           lineHeight:   1.85,
-          flex:         1,           // ← stretches so footer is always at bottom
+          flex:         1,
           marginBottom: '1.25rem',
         }}>
           {project.tagline}
         </p>
 
-        {/* Footer — always pinned to bottom of card */}
+        {/* Footer */}
         <div style={{
           display:        'flex',
           justifyContent: 'space-between',
@@ -269,7 +263,7 @@ export default function ProjectCard({ project, index = 0 }) {
           paddingTop:     '1rem',
           borderTop:      `1px solid ${hovered ? 'rgba(255,255,255,0.07)' : 'var(--border)'}`,
           transition:     'border-color 0.3s ease',
-          marginTop:      'auto',    // extra safety — always at bottom
+          marginTop:      'auto',
         }}>
           <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center' }}>
             <Tag variant={project.status === 'Live' ? 'live' : 'default'}>
@@ -297,6 +291,18 @@ export default function ProjectCard({ project, index = 0 }) {
           </span>
         </div>
       </div>
+
+      <style>{`
+        /* Hide desktop glow on touch devices */
+        @media (hover: none) {
+          .card-glow-desktop { display: none !important; }
+        }
+
+        /* Mobile: adjust card body padding slightly */
+        @media (max-width: 639px) {
+          /* Cards are single column so we can be a bit more generous with spacing */
+        }
+      `}</style>
     </Link>
   )
 }

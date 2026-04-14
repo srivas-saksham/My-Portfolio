@@ -1,25 +1,15 @@
 /**
- * ProjectsPage.jsx
+ * ProjectsPage.jsx — Fully Responsive
  *
- * Full projects listing with working filter + layout toggle.
+ * Desktop: unchanged — full list/grid with filter pills and layout toggle
+ * Tablet:  same structure, tightened spacing, 2-col grid
+ * Mobile:  single column, filter pills wrap, grid collapses to 1-col,
+ *          list view items stack cleanly, header stacks vertically
  *
- * Equal-height grid fix:
- *   CSS Grid stretches each cell to the tallest item in the row by default
- *   (align-items: stretch). For the card to actually fill that height, the
- *   chain must be unbroken:
- *
- *     grid container (display:grid, align-items:stretch — default)
- *       └─ wrapper div  → height: 100%   ← this was missing
- *            └─ ProjectCard  → height: 100%, display:flex, flex-direction:column
- *                 └─ card body  → flex: 1
- *                      └─ tagline  → flex: 1  (pushes footer to bottom)
- *
- * Filter / visibility fix:
- *   ProjectRow and ProjectCard no longer have data-gsap="fade-up" on their
- *   root elements. That attribute sets opacity:0 via animations.css, and
- *   GSAP ScrollTrigger only fires once on mount — re-rendered items stay
- *   invisible forever. The header data-gsap wrapper here fires once and is
- *   unaffected by list re-renders.
+ * GRID VIEW ON MOBILE:
+ *   Uses ProjectCardMini rendered in a dedicated 2-column grid.
+ *   ProjectCard (full-featured desktop card) is hidden on mobile in grid mode.
+ *   ProjectCardMini is hidden on tablet+ — only visible < 640px.
  */
 
 import { useState, useMemo } from 'react'
@@ -28,6 +18,7 @@ import SEO             from '@components/seo/SEO'
 import SectionLabel    from '@components/ui/SectionLabel'
 import ProjectRow      from '@components/projects/ProjectRow'
 import ProjectCard     from '@components/projects/ProjectCard'
+import ProjectCardMini from '@components/projects/ProjectCardMini'
 import SceneBackground from '@components/layout/SceneBackground'
 
 import { PROJECTS } from '@data/projects'
@@ -60,6 +51,8 @@ function LayoutToggle({ mode, setMode }) {
             cursor:     'none',
             transition: 'background 0.2s ease, color 0.2s ease',
             lineHeight: 1,
+            minHeight:  '38px',
+            minWidth:   '38px',
           }}
         >
           {icon}
@@ -96,6 +89,7 @@ function FilterPill({ label, count, active, onClick }) {
         gap:           '0.5rem',
         cursor:        'none',
         transition:    'color 0.25s ease, border-color 0.25s ease, background 0.25s ease',
+        minHeight:     '38px',
       }}
     >
       {label}
@@ -130,11 +124,14 @@ export default function ProjectsPage() {
     <PageWrapper>
       <SEO title={META.projects.title} description={META.projects.description} />
 
-      <section style={{
-        padding:  'clamp(4rem, 8vw, 8rem) 2.5rem',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
+      <section
+        className="projects-section"
+        style={{
+          padding:  'clamp(4rem, 8vw, 8rem) 2.5rem',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
         <SceneBackground
           gridOpacity={0.10}
           glow1Color="rgba(71,49,152,0.14)"
@@ -146,17 +143,20 @@ export default function ProjectsPage() {
 
         <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
 
-          {/* Header — data-gsap here is fine; renders once */}
+          {/* Header */}
           <div data-gsap="fade-up" style={{ marginBottom: '4.5rem' }}>
             <SectionLabel index="01" label="All Work" />
 
-            <div style={{
-              display:        'flex',
-              alignItems:     'flex-end',
-              justifyContent: 'space-between',
-              flexWrap:       'wrap',
-              gap:            '1.5rem',
-            }}>
+            <div
+              className="projects-header-row"
+              style={{
+                display:        'flex',
+                alignItems:     'flex-end',
+                justifyContent: 'space-between',
+                flexWrap:       'wrap',
+                gap:            '1.5rem',
+              }}
+            >
               <h1 style={{
                 fontFamily:    'var(--font-display)',
                 fontSize:      'clamp(3rem, 8vw, 7rem)',
@@ -176,12 +176,15 @@ export default function ProjectsPage() {
                 </span>
               </h1>
 
-              <div style={{
-                display:      'flex',
-                alignItems:   'center',
-                gap:          '1.25rem',
-                paddingBottom:'0.5rem',
-              }}>
+              <div
+                className="projects-controls"
+                style={{
+                  display:      'flex',
+                  alignItems:   'center',
+                  gap:          '1.25rem',
+                  paddingBottom:'0.5rem',
+                }}
+              >
                 <span style={{
                   fontFamily:    'var(--font-mono)',
                   fontSize:      '0.65rem',
@@ -197,14 +200,17 @@ export default function ProjectsPage() {
             </div>
 
             {/* Filter pills */}
-            <div style={{
-              display:    'flex',
-              gap:        '0.5rem',
-              flexWrap:   'wrap',
-              marginTop:  '2.5rem',
-              paddingTop: '2rem',
-              borderTop:  '1px solid var(--border)',
-            }}>
+            <div
+              className="projects-filters"
+              style={{
+                display:    'flex',
+                gap:        '0.5rem',
+                flexWrap:   'wrap',
+                marginTop:  '2.5rem',
+                paddingTop: '2rem',
+                borderTop:  '1px solid var(--border)',
+              }}
+            >
               {['All', 'Live', 'In Progress'].map(filter => (
                 <FilterPill
                   key={filter}
@@ -239,7 +245,7 @@ export default function ProjectsPage() {
             </div>
           )}
 
-          {/* List layout — no data-gsap on container or children */}
+          {/* ── LIST LAYOUT ──────────────────────────────────────────────────── */}
           {layout === 'list' && displayedProjects.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {displayedProjects.map((project, i) => (
@@ -248,35 +254,118 @@ export default function ProjectsPage() {
             </div>
           )}
 
-          {/* Grid layout — wrapper div must be height:100% to pass cell height to card */}
+          {/* ── GRID LAYOUT ──────────────────────────────────────────────────── */}
           {layout === 'grid' && displayedProjects.length > 0 && (
-            <div style={{
-              display:             'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-              gap:                 '1px',
-              background:          'var(--border)',
-              border:              '1px solid var(--border)',
-              // align-items:stretch is the CSS Grid default — cells stretch to
-              // the tallest item in the row. The wrapper div and card both
-              // need height:100% to propagate this height down.
-              alignItems:          'stretch',
-            }}>
-              {displayedProjects.map((project, i) => (
-                <div
-                  key={project.slug}
-                  style={{
-                    background: 'var(--bg-base)',
-                    height:     '100%',   // ← passes grid cell height to ProjectCard
-                  }}
-                >
-                  <ProjectCard project={project} index={i} />
+            <>
+              {/*
+               * DESKTOP + TABLET grid
+               * Hidden on mobile via .projects-grid-desktop class
+               */}
+              <div
+                className="projects-grid-desktop"
+                style={{
+                  display:             'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+                  gap:                 '1px',
+                  background:          'var(--border)',
+                  border:              '1px solid var(--border)',
+                  alignItems:          'stretch',
+                }}
+              >
+                {displayedProjects.map((project, i) => (
+                  <div
+                    key={project.slug}
+                    style={{
+                      background: 'var(--bg-base)',
+                      height:     '100%',
+                    }}
+                  >
+                    <ProjectCard project={project} index={i} />
+                  </div>
+                ))}
+              </div>
+
+              {/*
+               * MOBILE-ONLY 2-column grid
+               * Uses ProjectCardMini — compact cards designed for narrow screens.
+               * Hidden on tablet+ via .projects-grid-mobile class.
+               */}
+              <div
+                className="projects-grid-mobile"
+                style={{
+                  display: 'none', // shown via media query below
+                }}
+              >
+                <div style={{
+                  display:             'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap:                 '0.6rem',
+                  alignItems:          'stretch',
+                }}>
+                  {displayedProjects.map((project) => (
+                    <ProjectCardMini key={project.slug} project={project} />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            </>
           )}
 
         </div>
       </section>
+
+      <style>{`
+        /* ── Mobile (< 640px) ──────────────────────────────────── */
+        @media (max-width: 639px) {
+          .projects-section {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+            padding-top: 3.5rem !important;
+          }
+
+          .projects-header-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+          }
+
+          .projects-controls {
+            padding-bottom: 0 !important;
+            width: 100% !important;
+            justify-content: space-between !important;
+          }
+
+          .projects-filters {
+            margin-top: 1.75rem !important;
+            padding-top: 1.5rem !important;
+            gap: 0.4rem !important;
+          }
+
+          /* Grid view: hide full ProjectCard, show ProjectCardMini 2-col */
+          .projects-grid-desktop { display: none !important; }
+          .projects-grid-mobile  { display: block !important; }
+        }
+
+        /* ── Tablet (640px – 1023px) ───────────────────────────── */
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .projects-section {
+            padding-left: 1.75rem !important;
+            padding-right: 1.75rem !important;
+          }
+
+          /* Grid view: tablet uses standard ProjectCard in 2-col */
+          .projects-grid-desktop {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          /* Always hide mobile mini-grid on tablet+ */
+          .projects-grid-mobile { display: none !important; }
+        }
+
+        /* ── Desktop (1024px+) — untouched ─────────────────────── */
+        @media (min-width: 1024px) {
+          /* Always hide mobile mini-grid on desktop */
+          .projects-grid-mobile { display: none !important; }
+        }
+      `}</style>
     </PageWrapper>
   )
 }
