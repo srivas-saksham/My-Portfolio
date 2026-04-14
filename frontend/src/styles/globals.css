@@ -45,6 +45,16 @@ body {
   cursor: none;
 }
 
+/* On touch/mobile devices restore default cursor */
+@media (hover: none) and (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
+  a, button {
+    cursor: pointer;
+  }
+}
+
 ::selection {
   background: var(--indigo);
   color: var(--text);
@@ -72,8 +82,8 @@ a { text-decoration: none; color: inherit; }
 
 img { display: block; max-width: 100%; }
 
-/* Responsive grid overrides */
-@media (max-width: 768px) {
+/* ── Responsive grid overrides ── */
+@media (max-width: 767px) {
   .about-grid,
   .contact-grid,
   .project-body-grid {
@@ -81,7 +91,7 @@ img { display: block; max-width: 100%; }
   }
 }
 
-/* Animated gradient shimmer on SRIVASTAVA */
+/* ── Animated gradient shimmer on SRIVASTAVA ── */
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
@@ -89,4 +99,40 @@ img { display: block; max-width: 100%; }
 
 .hero-shimmer {
   animation: shimmer 6s linear infinite;
+}
+
+/* ── Global responsive section padding ── */
+@media (max-width: 639px) {
+  /* Reduce horizontal padding on all page sections */
+  section {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  section {
+    padding-left: 1.75rem !important;
+    padding-right: 1.75rem !important;
+  }
+}
+
+/* ── SectionLabel responsive ── */
+@media (max-width: 639px) {
+  .section-label-index {
+    font-size: 0.95rem !important;
+  }
+}
+
+/* ── Touch: remove custom cursor on interactive elements ── */
+@media (hover: none) {
+  * { cursor: auto !important; }
+  a, button, [data-cursor] { cursor: pointer !important; }
+}
+
+/* ── Prevent horizontal overflow on mobile ── */
+@media (max-width: 767px) {
+  .bio-inner-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

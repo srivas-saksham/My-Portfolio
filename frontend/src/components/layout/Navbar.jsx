@@ -10,8 +10,8 @@ const NAV_LINKS = [
 ]
 
 export default function Navbar() {
-  const [scrolled,  setScrolled]  = useState(false)
-  const [menuOpen,  setMenuOpen]  = useState(false)
+  const [scrolled,   setScrolled]   = useState(false)
+  const [menuOpen,   setMenuOpen]   = useState(false)
   const [hoveredIdx, setHoveredIdx] = useState(null)
 
   const location  = useLocation()
@@ -19,11 +19,9 @@ export default function Navbar() {
   const linkRefs  = useRef([])
   const centerRef = useRef(null)
 
-  // underline state: { left, width, opacity }
   const [underline, setUnderline] = useState({ left: 0, width: 0, opacity: 0 })
 
   const isActive = useCallback((href) => location.pathname === href, [location.pathname])
-
   const activeIdx = NAV_LINKS.findIndex(l => isActive(l.href))
 
   /* ── scroll detection ── */
@@ -35,6 +33,12 @@ export default function Navbar() {
 
   /* ── close mobile menu on route change ── */
   useEffect(() => { setMenuOpen(false) }, [location.pathname])
+
+  /* ── lock body scroll when menu open ── */
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
 
   /* ── measure underline position ── */
   const measureLink = useCallback((idx) => {
@@ -52,17 +56,14 @@ export default function Navbar() {
     })
   }, [])
 
-  /* ── reposition underline to active link on mount / route change ── */
   useEffect(() => {
     if (activeIdx >= 0) {
-      // rAF to ensure DOM is laid out
       requestAnimationFrame(() => measureLink(activeIdx))
     } else {
       setUnderline(u => ({ ...u, opacity: 0 }))
     }
   }, [activeIdx, measureLink])
 
-  /* ── hover handlers ── */
   const handleMouseEnter = (idx) => {
     setHoveredIdx(idx)
     measureLink(idx)
@@ -92,14 +93,20 @@ export default function Navbar() {
         .nav-link-inner:hover::before { opacity: 0.10; }
         .nav-link-inner.is-active::before { opacity: 0.07; }
 
-        .md-show { display: none !important; }
+        /* Desktop nav — hidden below 768px */
+        .center-nav  { display: none !important; }
+        .nav-hire-btn { display: none !important; }
+
         @media (min-width: 768px) {
-          .md-show { display: block !important; }
-          .hamburger { display: none !important; }
-          .center-nav { display: flex !important; }
+          .center-nav   { display: flex !important; }
+          .nav-hire-btn { display: block !important; }
+          .hamburger    { display: none !important; }
         }
 
         .mobile-link:hover { color: var(--text) !important; }
+
+        /* Mobile overlay link active state */
+        .mobile-link-active { color: var(--text) !important; }
       `}</style>
 
       <nav
@@ -110,8 +117,8 @@ export default function Navbar() {
           left:           0,
           right:          0,
           zIndex:         1000,
-          padding:        '0 2.5rem',
-          height:         '68px',
+          padding:        '0 1.5rem',
+          height:         '60px',
           display:        'flex',
           alignItems:     'center',
           justifyContent: 'space-between',
@@ -119,7 +126,7 @@ export default function Navbar() {
             ? '1px solid rgba(56,56,56,0.6)'
             : '1px solid transparent',
           background: scrolled
-            ? 'rgba(8,8,8,0.88)'
+            ? 'rgba(8,8,8,0.92)'
             : 'transparent',
           backdropFilter: scrolled ? 'blur(20px) saturate(1.2)' : 'none',
           transition:     'background 0.5s ease, border-color 0.5s ease',
@@ -172,7 +179,6 @@ export default function Navbar() {
           className="center-nav"
           ref={centerRef}
           style={{
-            display:    'none',          /* overridden by .center-nav media query */
             position:   'absolute',
             left:       '50%',
             transform:  'translateX(-50%)',
@@ -180,7 +186,6 @@ export default function Navbar() {
             gap:        '0',
           }}
         >
-          {/* Shared animated underline */}
           <span
             aria-hidden="true"
             style={{
@@ -189,7 +194,6 @@ export default function Navbar() {
               height:     '1px',
               background: 'var(--indigo)',
               borderRadius: '1px',
-              /* center-relative: shift left by half width so we can use translateX(left) */
               left:       0,
               transform:  `translateX(calc(${underline.left}px - 50%))`,
               width:      `${underline.width}px`,
@@ -233,7 +237,7 @@ export default function Navbar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
           <Link
             to="/contact"
-            className="md-show"
+            className="nav-hire-btn"
             style={{
               fontFamily:     'var(--font-mono)',
               fontSize:       '0.68rem',
@@ -263,16 +267,22 @@ export default function Navbar() {
           <button
             className="hamburger"
             onClick={() => setMenuOpen(v => !v)}
-            aria-label="Toggle menu"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
             style={{
               background:     'none',
-              border:         'none',
-              cursor:         'none',
-              padding:        '6px',
+              border:         '1px solid rgba(255,255,255,0.08)',
+              cursor:         'pointer',
+              padding:        '8px 10px',
               display:        'flex',
               flexDirection:  'column',
               gap:            '4px',
               justifyContent: 'center',
+              borderRadius:   '4px',
+              transition:     'border-color 0.2s ease',
+              minWidth:       '40px',
+              minHeight:      '36px',
+              alignItems:     'center',
             }}
           >
             {[0, 1, 2].map(i => (
@@ -296,21 +306,27 @@ export default function Navbar() {
       </nav>
 
       {/* ── Mobile menu overlay ── */}
-      <div style={{
-        position:       'fixed',
-        inset:          0,
-        background:     'rgba(8,8,8,0.97)',
-        zIndex:         998,
-        display:        'flex',
-        flexDirection:  'column',
-        alignItems:     'flex-start',
-        justifyContent: 'center',
-        padding:        '0 2.5rem',
-        transform:      menuOpen ? 'translateY(0)' : 'translateY(-100%)',
-        transition:     'transform 0.5s cubic-bezier(0.19,1,0.22,1)',
-        pointerEvents:  menuOpen ? 'all' : 'none',
-        backdropFilter: 'blur(20px)',
-      }}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+        style={{
+          position:       'fixed',
+          inset:          0,
+          background:     'rgba(8,8,8,0.98)',
+          zIndex:         998,
+          display:        'flex',
+          flexDirection:  'column',
+          alignItems:     'flex-start',
+          justifyContent: 'center',
+          padding:        '0 1.5rem',
+          transform:      menuOpen ? 'translateY(0)' : 'translateY(-100%)',
+          transition:     'transform 0.5s cubic-bezier(0.19,1,0.22,1)',
+          pointerEvents:  menuOpen ? 'all' : 'none',
+          backdropFilter: 'blur(20px)',
+          overflowY:      'auto',
+        }}
+      >
         {/* Ambient glow */}
         <div style={{
           position:      'absolute',
@@ -322,41 +338,52 @@ export default function Navbar() {
           pointerEvents: 'none',
         }} />
 
-        {NAV_LINKS.map((link, i) => (
-          <Link
-            key={link.href}
-            to={link.href}
-            className="mobile-link"
-            style={{
-              fontFamily:     'var(--font-display)',
-              fontSize:       'clamp(3rem, 10vw, 6rem)',
-              fontWeight:     600,
-              letterSpacing:  '-0.04em',
-              lineHeight:     1.05,
-              color:          isActive(link.href) ? 'var(--text)' : 'rgba(245,245,245,0.3)',
-              textDecoration: 'none',
-              transition:     'color 0.2s ease',
-              display:        'block',
-              padding:        '0.1em 0',
-              borderBottom:   '1px solid var(--border)',
-              width:          '100%',
-            }}
-          >
-            <span style={{
-              fontFamily:    'var(--font-mono)',
-              fontSize:      '0.55rem',
-              color:         'var(--muted)',
-              letterSpacing: '0.12em',
-              verticalAlign: 'super',
-              marginRight:   '0.5rem',
-            }}>
-              0{i + 1}
-            </span>
-            {link.label}
-          </Link>
-        ))}
+        {/* Nav links */}
+        <div style={{ width: '100%', paddingTop: '80px', paddingBottom: '2rem' }}>
+          {NAV_LINKS.map((link, i) => (
+            <Link
+              key={link.href}
+              to={link.href}
+              className={`mobile-link${isActive(link.href) ? ' mobile-link-active' : ''}`}
+              style={{
+                fontFamily:     'var(--font-display)',
+                fontSize:       'clamp(2.8rem, 10vw, 5.5rem)',
+                fontWeight:     600,
+                letterSpacing:  '-0.04em',
+                lineHeight:     1.05,
+                color:          isActive(link.href) ? 'var(--text)' : 'rgba(245,245,245,0.25)',
+                textDecoration: 'none',
+                transition:     'color 0.2s ease',
+                display:        'block',
+                padding:        '0.15em 0',
+                borderBottom:   '1px solid var(--border)',
+                width:          '100%',
+              }}
+            >
+              <span style={{
+                fontFamily:    'var(--font-mono)',
+                fontSize:      '0.55rem',
+                color:         'var(--muted)',
+                letterSpacing: '0.12em',
+                verticalAlign: 'super',
+                marginRight:   '0.5rem',
+              }}>
+                0{i + 1}
+              </span>
+              {link.label}
+            </Link>
+          ))}
+        </div>
 
-        <div style={{ marginTop: '3rem', display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+        {/* Bottom contact row */}
+        <div style={{
+          marginTop:  '0',
+          paddingBottom: '2rem',
+          display:    'flex',
+          flexDirection: 'column',
+          gap:        '1rem',
+          width:      '100%',
+        }}>
           <a
             href={`mailto:${SITE.email}`}
             style={{
@@ -365,10 +392,49 @@ export default function Navbar() {
               color:          'var(--muted)',
               letterSpacing:  '0.08em',
               textDecoration: 'none',
+              display:        'block',
             }}
           >
             {SITE.email}
           </a>
+
+          {/* Quick action buttons */}
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <Link
+              to="/contact"
+              style={{
+                fontFamily:     'var(--font-mono)',
+                fontSize:       '0.62rem',
+                letterSpacing:  '0.1em',
+                textTransform:  'uppercase',
+                color:          '#fff',
+                background:     'var(--indigo)',
+                padding:        '0.65rem 1.25rem',
+                borderRadius:   'var(--radius-pill)',
+                textDecoration: 'none',
+              }}
+            >
+              Hire Me →
+            </Link>
+            <a
+              href={SITE.resume}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily:     'var(--font-mono)',
+                fontSize:       '0.62rem',
+                letterSpacing:  '0.1em',
+                textTransform:  'uppercase',
+                color:          'var(--muted)',
+                border:         '1px solid var(--border)',
+                padding:        '0.65rem 1.25rem',
+                borderRadius:   'var(--radius-pill)',
+                textDecoration: 'none',
+              }}
+            >
+              Resume ↓
+            </a>
+          </div>
         </div>
       </div>
     </>

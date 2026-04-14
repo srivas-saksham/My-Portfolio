@@ -1,15 +1,9 @@
 /**
- * FeaturedProjects.jsx
+ * FeaturedProjects.jsx — Fully Responsive
  *
- * Homepage section — top 3 featured projects.
- *
- * Design decisions:
- *   - Cover image is full-bleed right column: fills the row from top-right to
- *     bottom-right corner, clipped by the card's border-radius.
- *   - No grid / SceneBackground — replaced with a single interactive parallax
- *     white radial gradient that follows the mouse.
- *   - "Live" status tag uses green border treatment (matching /projects row).
- *   - All existing hover interactions, 3-D tilt, glow, tag, arrow — preserved.
+ * Desktop: unchanged — full-bleed cover image, 3-col grid, 3D tilt
+ * Tablet:  cover image shrinks, text stacks gracefully
+ * Mobile:  single-column cards, no cover image overlap, no 3D tilt
  */
 
 import { useRef, useState, useEffect } from 'react'
@@ -26,7 +20,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const FEATURED = PROJECTS.slice(0, 3)
 
-// ─── Interactive parallax white radial glow ──────────────────────────────────
+// ─── Interactive parallax white radial glow ───────────────────────────────────
 function ParallaxGlow() {
   const glow1 = useRef(null)
   const glow2 = useRef(null)
@@ -38,20 +32,10 @@ function ParallaxGlow() {
       const dy = (e.clientY / H - 0.5) * 2
 
       if (glow1.current) {
-        gsap.to(glow1.current, {
-          x: dx * 60,
-          y: dy * 40,
-          duration: 1.8,
-          ease: 'power2.out',
-        })
+        gsap.to(glow1.current, { x: dx * 60, y: dy * 40, duration: 1.8, ease: 'power2.out' })
       }
       if (glow2.current) {
-        gsap.to(glow2.current, {
-          x: dx * -40,
-          y: dy * -28,
-          duration: 2.2,
-          ease: 'power2.out',
-        })
+        gsap.to(glow2.current, { x: dx * -40, y: dy * -28, duration: 2.2, ease: 'power2.out' })
       }
     }
 
@@ -70,20 +54,18 @@ function ParallaxGlow() {
         zIndex:        0,
       }}
     >
-      {/* Primary white radial — top-left */}
       <div
         ref={glow1}
         style={{
           position:   'absolute',
           top:        '-20%',
-          left:      '-10%',
+          left:       '-10%',
           width:      '55vw',
           height:     '55vw',
           background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.032) 0%, transparent 65%)',
           willChange: 'transform',
         }}
       />
-      {/* Secondary white radial — bottom-left */}
       <div
         ref={glow2}
         style={{
@@ -100,19 +82,13 @@ function ParallaxGlow() {
   )
 }
 
-// ─── Cover image — right-aligned full-bleed ───────────────────────────────────
-// The image itself is masked via CSS mask-image so its left edge fades to
-// transparent naturally — no colour overlay, no gradient div.
-// The mask is a linear-gradient on the alpha channel:
-//   transparent 0% → black (fully opaque) ~42%
-// "black" in a mask means keep the pixel; "transparent" means discard it.
+// ─── Cover Image ─────────────────────────────────────────────────────────────
 function CoverImage({ slug, accentColor, hovered, borderRadius }) {
   const { screenshots } = useProjectAssets(slug)
   const cover = screenshots[0]?.url ?? null
   const [imgError, setImgError] = useState(false)
   const accent = accentColor ?? 'rgba(71,49,152,0.25)'
 
-  // Smooth perceptual ramp — eased stops so the fade feels natural
   const maskImage = `linear-gradient(
     90deg,
     transparent        0%,
@@ -149,7 +125,6 @@ function CoverImage({ slug, accentColor, hovered, borderRadius }) {
             objectFit:          'cover',
             objectPosition:     'top center',
             display:            'block',
-            // Alpha-channel mask — fades the image itself, touches nothing else
             maskImage,
             WebkitMaskImage:    maskImage,
             maskRepeat:         'no-repeat',
@@ -175,7 +150,6 @@ function CoverImage({ slug, accentColor, hovered, borderRadius }) {
         />
       )}
 
-      {/* Accent wash on hover — also masked so it respects the fade edge */}
       <div
         style={{
           position:        'absolute',
@@ -194,11 +168,174 @@ function CoverImage({ slug, accentColor, hovered, borderRadius }) {
   )
 }
 
-// ─── Single Project Row ───────────────────────────────────────────────────────
+// ─── Mobile Card (replaces the row on small screens) ─────────────────────────
+function MobileProjectCard({ project }) {
+  const { screenshots } = useProjectAssets(project.slug)
+  const cover = screenshots[0]?.url ?? null
+  const [imgError, setImgError] = useState(false)
+
+  const accent = project.accentColor ?? 'rgba(71,49,152,0.15)'
+
+  const statusTag =
+    project.status === 'Live' ? (
+      <span style={{
+        display:       'inline-flex',
+        alignItems:    'center',
+        fontFamily:    'var(--font-mono)',
+        fontSize:      '0.62rem',
+        letterSpacing: '0.06em',
+        textTransform: 'uppercase',
+        padding:       '0.25rem 0.75rem',
+        borderRadius:  'var(--radius-pill)',
+        whiteSpace:    'nowrap',
+        lineHeight:    1,
+        background:    'rgba(74,222,128,0.08)',
+        border:        '1px solid rgba(74,222,128,0.3)',
+        color:         '#4ade80',
+      }}>
+        {project.status}
+      </span>
+    ) : (
+      <Tag variant="ghost">{project.status}</Tag>
+    )
+
+  return (
+    <Link
+      to={`/projects/${project.slug}`}
+      style={{
+        display:        'flex',
+        flexDirection:  'column',
+        background:     'rgba(255,255,255,0.014)',
+        border:         '1px solid rgba(255,255,255,0.045)',
+        borderRadius:   '12px',
+        textDecoration: 'none',
+        overflow:       'hidden',
+        position:       'relative',
+      }}
+    >
+      {/* Thumbnail */}
+      {cover && !imgError ? (
+        <div style={{
+          width:       '100%',
+          aspectRatio: '16/9',
+          overflow:    'hidden',
+          flexShrink:  0,
+          background:  'var(--bg-2)',
+        }}>
+          <img
+            src={cover}
+            alt={`${project.title} preview`}
+            onError={() => setImgError(true)}
+            style={{
+              width:          '100%',
+              height:         '100%',
+              objectFit:      'cover',
+              objectPosition: 'top center',
+              display:        'block',
+              filter:         'brightness(0.65) saturate(0.85)',
+            }}
+          />
+          <div style={{
+            position:   'absolute',
+            top:        0,
+            left:       0,
+            right:      0,
+            height:     '45%',
+            background: 'linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,0.5) 100%)',
+            pointerEvents: 'none',
+          }} />
+        </div>
+      ) : (
+        <div style={{
+          width:       '100%',
+          aspectRatio: '16/9',
+          background:  `linear-gradient(135deg, ${accent} 0%, rgba(8,8,8,0) 100%)`,
+          display:     'flex',
+          alignItems:  'center',
+          justifyContent: 'center',
+          flexShrink:  0,
+        }}>
+          <span style={{
+            fontFamily:       'var(--font-display)',
+            fontSize:         '5rem',
+            fontWeight:       700,
+            color:            'transparent',
+            WebkitTextStroke: '1px rgba(245,245,245,0.06)',
+          }}>
+            {project.id}
+          </span>
+        </div>
+      )}
+
+      {/* Content */}
+      <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+        {/* Tags */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+          {project.tags.slice(0, 3).map(tag => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </div>
+
+        {/* Title */}
+        <h3 style={{
+          fontFamily:    'var(--font-display)',
+          fontSize:      'clamp(1.4rem, 6vw, 1.9rem)',
+          fontWeight:    600,
+          letterSpacing: '-0.03em',
+          lineHeight:    0.95,
+          color:         'var(--text)',
+        }}>
+          {project.title}
+        </h3>
+
+        {/* Tagline */}
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize:   '0.68rem',
+          color:      'var(--muted)',
+          lineHeight: 1.75,
+        }}>
+          {project.tagline}
+        </p>
+
+        {/* Footer */}
+        <div style={{
+          display:        'flex',
+          justifyContent: 'space-between',
+          alignItems:     'center',
+          paddingTop:     '0.75rem',
+          borderTop:      '1px solid var(--border)',
+          marginTop:      '0.25rem',
+        }}>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            {statusTag}
+            <span style={{
+              fontFamily:    'var(--font-mono)',
+              fontSize:      '0.57rem',
+              color:         'var(--ghost)',
+              letterSpacing: '0.08em',
+            }}>
+              {project.year}
+            </span>
+          </div>
+          <span style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize:   '0.9rem',
+            color:      'var(--muted)',
+          }}>
+            ↗
+          </span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+// ─── Desktop Project Row ─────────────────────────────────────────────────────
 function ProjectRow({ project }) {
   const rowRef  = useRef(null)
   const glowRef = useRef(null)
-  const [hovered, setHovered] = useState(false)
+  const [hovered,    setHovered]    = useState(false)
   const [mouseLocal, setMouseLocal] = useState({ x: 0.5, y: 0.5 })
 
   const CARD_RADIUS = '16px'
@@ -233,7 +370,6 @@ function ProjectRow({ project }) {
 
   const accent = project.accentColor ?? 'rgba(71,49,152,0.18)'
 
-  // Green "Live" tag — inline style matching ProjectRow.jsx treatment
   const statusTag =
     project.status === 'Live' ? (
       <span style={{
@@ -270,13 +406,11 @@ function ProjectRow({ project }) {
         onMouseLeave={onMouseLeave}
         style={{
           display:             'grid',
-          // 3-col: number | content | spacer for the cover image area
           gridTemplateColumns: '3.5rem 1fr 0px',
           gap:                 '0 1.75rem',
           alignItems:          'center',
-          // Generous padding; right padding leaves room for the cover image
           padding:             '2rem 2.25rem 2rem 2rem',
-          paddingRight:        'calc(38% + 2.25rem)', // keep text clear of cover
+          paddingRight:        'calc(38% + 2.25rem)',
           marginBottom:        '1px',
           background:          hovered
             ? 'rgba(255,255,255,0.034)'
@@ -299,7 +433,6 @@ function ProjectRow({ project }) {
           minHeight:           '130px',
         }}
       >
-        {/* Cover image — right-aligned, full-bleed */}
         <CoverImage
           slug={project.slug}
           accentColor={project.accentColor}
@@ -307,7 +440,6 @@ function ProjectRow({ project }) {
           borderRadius={CARD_RADIUS}
         />
 
-        {/* Mouse-following radial glow (text-side only) */}
         <div
           ref={glowRef}
           aria-hidden="true"
@@ -327,21 +459,20 @@ function ProjectRow({ project }) {
           }}
         />
 
-        {/* Top-edge shine */}
         {hovered && (
           <div aria-hidden="true" style={{
-            position:   'absolute',
-            top:        0,
-            left:       '8%',
-            right:      '38%', // stop before image
-            height:     '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)',
-            zIndex:     1,
-            pointerEvents:'none',
+            position:      'absolute',
+            top:           0,
+            left:          '8%',
+            right:         '38%',
+            height:        '1px',
+            background:    'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)',
+            zIndex:        1,
+            pointerEvents: 'none',
           }} />
         )}
 
-        {/* ── Number ── */}
+        {/* Number */}
         <span style={{
           fontFamily:    'var(--font-mono)',
           fontSize:      '0.65rem',
@@ -356,21 +487,14 @@ function ProjectRow({ project }) {
           {project.id}
         </span>
 
-        {/* ── Body ── */}
+        {/* Body */}
         <div style={{ position: 'relative', zIndex: 3, transform: 'translateZ(12px)' }}>
-          {/* Tags */}
-          <div style={{
-            display:      'flex',
-            flexWrap:     'wrap',
-            gap:          '0.32rem',
-            marginBottom: '0.65rem',
-          }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.32rem', marginBottom: '0.65rem' }}>
             {project.tags.slice(0, 4).map(tag => (
               <Tag key={tag}>{tag}</Tag>
             ))}
           </div>
 
-          {/* Title */}
           <h3 style={{
             fontFamily:    'var(--font-display)',
             fontSize:      'clamp(1.4rem, 2.6vw, 2.1rem)',
@@ -385,7 +509,6 @@ function ProjectRow({ project }) {
             {project.title}
           </h3>
 
-          {/* Tagline */}
           <p style={{
             fontFamily: 'var(--font-mono)',
             fontSize:   '0.7rem',
@@ -396,13 +519,7 @@ function ProjectRow({ project }) {
             {project.tagline}
           </p>
 
-          {/* Status + year */}
-          <div style={{
-            display:    'flex',
-            gap:        '0.5rem',
-            marginTop:  '0.8rem',
-            alignItems: 'center',
-          }}>
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.8rem', alignItems: 'center' }}>
             {statusTag}
             <span style={{
               fontFamily:    'var(--font-mono)',
@@ -415,7 +532,7 @@ function ProjectRow({ project }) {
           </div>
         </div>
 
-        {/* ── Arrow ── (overlaid at far right of text area) */}
+        {/* Arrow */}
         <div style={{
           position:   'absolute',
           right:      'calc(38% + 1.25rem)',
@@ -449,7 +566,6 @@ export default function FeaturedProjects() {
       overflow:   'hidden',
       borderTop:  '1px solid rgba(82, 30, 30, 0.04)',
     }}>
-      {/* Interactive parallax white radial glow — no grid */}
       <ParallaxGlow />
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
@@ -482,10 +598,17 @@ export default function FeaturedProjects() {
           <Button to="/projects" variant="ghost">View All Work →</Button>
         </div>
 
-        {/* Project rows */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+        {/* ── Desktop rows (hidden on mobile) ── */}
+        <div className="featured-desktop-rows" style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
           {FEATURED.map((project) => (
             <ProjectRow key={project.slug} project={project} />
+          ))}
+        </div>
+
+        {/* ── Mobile cards (hidden on desktop) ── */}
+        <div className="featured-mobile-cards" style={{ display: 'none', flexDirection: 'column', gap: '1rem' }}>
+          {FEATURED.map((project) => (
+            <MobileProjectCard key={project.slug} project={project} />
           ))}
         </div>
 
@@ -517,6 +640,25 @@ export default function FeaturedProjects() {
           }} />
         </div>
       </div>
+
+      <style>{`
+        /* Mobile: show cards, hide rows; tighten padding */
+        @media (max-width: 767px) {
+          .featured-desktop-rows { display: none !important; }
+          .featured-mobile-cards { display: flex !important; }
+
+          section {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+          }
+        }
+
+        /* Tablet: show rows but reduce cover image */
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .featured-desktop-rows { display: flex !important; }
+          .featured-mobile-cards { display: none !important; }
+        }
+      `}</style>
     </section>
   )
 }

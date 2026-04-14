@@ -10,17 +10,17 @@ import { SITE } from '@utils/constants'
 gsap.registerPlugin(ScrollTrigger)
 
 export default function HeroSection() {
-  const sectionRef  = useRef(null)
-  const nameRef     = useRef(null)
-  const subRef      = useRef(null)
-  const actionsRef  = useRef(null)
-  const badgeRef    = useRef(null)
-  const statsRef    = useRef(null)
-  const videoRef    = useRef(null)
+  const sectionRef   = useRef(null)
+  const nameRef      = useRef(null)
+  const subRef       = useRef(null)
+  const actionsRef   = useRef(null)
+  const badgeRef     = useRef(null)
+  const statsRef     = useRef(null)
+  const videoRef     = useRef(null)
   const videoWrapRef = useRef(null)
   const [playing, setPlaying] = useState(true)
 
-  // Entrance animation — unchanged
+  // Entrance animation
   useEffect(() => {
     const tl = gsap.timeline({ delay: 0.15 })
 
@@ -54,7 +54,6 @@ export default function HeroSection() {
       '-=0.4'
     )
 
-    // Fade video in slowly after hero loads
     if (videoWrapRef.current) {
       gsap.fromTo(videoWrapRef.current,
         { opacity: 0 },
@@ -63,17 +62,17 @@ export default function HeroSection() {
     }
   }, [])
 
-  // Subtle mouse parallax on video
+  // Subtle mouse parallax on video — desktop only
   useEffect(() => {
-    const section = sectionRef.current
+    const section   = sectionRef.current
     const videoWrap = videoWrapRef.current
     if (!section || !videoWrap) return
 
     const handleMouseMove = (e) => {
       const { clientX, clientY } = e
       const { innerWidth, innerHeight } = window
-      const dx = (clientX / innerWidth  - 0.5) * 18  // max ±9px
-      const dy = (clientY / innerHeight - 0.5) * 12  // max ±6px
+      const dx = (clientX / innerWidth  - 0.5) * 18
+      const dy = (clientY / innerHeight - 0.5) * 12
       gsap.to(videoWrap, {
         x: dx,
         y: dy,
@@ -106,7 +105,7 @@ export default function HeroSection() {
         background: 'var(--bg-base)',
       }}
     >
-      {/* ── Layer 1: Scene grid (lowest) ── */}
+      {/* ── Layer 1: Scene grid ── */}
       <SceneBackground
         gridSize={72}
         gridOpacity={0.13}
@@ -118,20 +117,19 @@ export default function HeroSection() {
         parallaxStrength={1}
       />
 
-      {/* ── Layer 2: Cinematic video (middle) ── */}
+      {/* ── Layer 2: Cinematic video — hidden on mobile ── */}
       <div
         ref={videoWrapRef}
         aria-hidden="true"
+        className="hero-video-layer"
         style={{
           position:  'absolute',
-          // Anchored behind the name block — right-center
           top:       '-10%',
-          left:     '55%',
-          width:       'clamp(320px, 55vw, 720px)',
-          aspectRatio: '9/16',
-          zIndex:    1,           // above SceneBackground, below text
-          opacity:   0,           // GSAP fades this in
-          // Feathered radial mask — no hard edges anywhere
+          left:      '55%',
+          width:     'clamp(320px, 55vw, 720px)',
+          aspectRatio:'9/16',
+          zIndex:    1,
+          opacity:   0,
           WebkitMaskImage: `radial-gradient(
             ellipse 72% 78% at 50% 46%,
             black 0%,
@@ -152,7 +150,6 @@ export default function HeroSection() {
           )`,
         }}
       >
-        {/* Video element */}
         <video
           ref={videoRef}
           autoPlay
@@ -160,34 +157,30 @@ export default function HeroSection() {
           loop
           playsInline
           style={{
-            width:     '100%',
-            height:    '100%',
-            objectFit: 'cover',
-            display:   'block',
-            // Desaturate, darken, slight contrast boost — pushes it into depth
-            filter:    'brightness(0.38) saturate(0.25) contrast(1.15) blur(0.4px)',
+            width:        '100%',
+            height:       '100%',
+            objectFit:    'cover',
+            display:      'block',
+            filter:       'brightness(0.38) saturate(0.25) contrast(1.15) blur(0.4px)',
             mixBlendMode: 'lighten',
           }}
         >
           <source src="/assets/portraits/vid.mp4" type="video/mp4" />
         </video>
 
-        {/* Indigo tint overlay — theme cohesion */}
-        <div
-          style={{
-            position:   'absolute',
-            inset:      0,
-            background: 'radial-gradient(ellipse 60% 60% at 50% 44%, rgba(71,49,152,0.13) 0%, transparent 70%)',
-            mixBlendMode: 'screen',
-            pointerEvents: 'none',
-          }}
-        />
+        <div style={{
+          position:     'absolute',
+          inset:        0,
+          background:   'radial-gradient(ellipse 60% 60% at 50% 44%, rgba(71,49,152,0.13) 0%, transparent 70%)',
+          mixBlendMode: 'screen',
+          pointerEvents:'none',
+        }} />
       </div>
 
-      {/* Pause / Play toggle — outside mask wrapper so it's always visible */}
+      {/* Pause/Play toggle — hidden on mobile */}
       <button
         onClick={toggleVideo}
-        aria-hidden="false"
+        className="hero-video-toggle"
         style={{
           position:             'absolute',
           top:                  '5rem',
@@ -235,8 +228,14 @@ export default function HeroSection() {
         </span>
       </button>
 
-      {/* ── Layer 3: Content (top) ── */}
-      <div style={{ position: 'relative', zIndex: 2, maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
+      {/* ── Layer 3: Content ── */}
+      <div style={{
+        position:  'relative',
+        zIndex:    2,
+        maxWidth:  '1200px',
+        width:     '100%',
+        margin:    '0 auto',
+      }}>
 
         {/* Badge */}
         <div ref={badgeRef} style={{ opacity: 0, marginBottom: '2.5rem' }}>
@@ -252,7 +251,7 @@ export default function HeroSection() {
               className="hero-line-inner"
               style={{
                 fontFamily:    'var(--font-display)',
-                fontSize:      'clamp(4.5rem, 14vw, 13rem)',
+                fontSize:      'clamp(3.2rem, 14vw, 13rem)',
                 fontWeight:    700,
                 lineHeight:    0.88,
                 letterSpacing: '-0.04em',
@@ -271,7 +270,7 @@ export default function HeroSection() {
               className="hero-line-inner"
               style={{
                 fontFamily:           'var(--font-display)',
-                fontSize:             'clamp(4.5rem, 14vw, 13rem)',
+                fontSize:             'clamp(3.2rem, 14vw, 13rem)',
                 fontWeight:           300,
                 fontStyle:            'italic',
                 lineHeight:           0.88,
@@ -280,7 +279,7 @@ export default function HeroSection() {
                 WebkitTextStroke:     '0px rgba(245,245,245,0.45)',
                 display:              'block',
                 transform:            'translateY(110%)',
-                paddingLeft:          'clamp(1.5rem, 5vw, 7rem)',
+                paddingLeft:          'clamp(0.8rem, 5vw, 7rem)',
                 backgroundImage:      'linear-gradient(135deg, rgba(245,245,245,0.45) 0%, rgba(71,49,152,0.6) 50%, rgba(245,245,245,0.45) 100%)',
                 WebkitBackgroundClip: 'text',
                 backgroundSize:       '200% 100%',
@@ -291,18 +290,20 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Divider line with gradient */}
+        {/* Divider + tagline */}
         <div ref={subRef} style={{ opacity: 0 }}>
           <div style={{
             display:      'flex',
             alignItems:   'center',
             gap:          '1.5rem',
             marginBottom: '2rem',
+            flexWrap:     'wrap',
           }}>
             <div style={{
               width:      '32px',
               height:     '1px',
               background: 'linear-gradient(90deg, transparent, var(--indigo))',
+              flexShrink: 0,
             }} />
             <p style={{
               fontFamily:    'var(--font-mono)',
@@ -311,6 +312,7 @@ export default function HeroSection() {
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
               lineHeight:    1,
+              flexWrap:      'wrap',
             }}>
               Full-stack developer
               <span style={{ color: 'var(--ghost)', margin: '0 0.6rem' }}>·</span>
@@ -342,12 +344,15 @@ export default function HeroSection() {
             Resume ↓
           </Button>
 
-          <div style={{
-            marginLeft: 'auto',
-            display:    'flex',
-            gap:        '1rem',
-            alignItems: 'center',
-          }}>
+          <div
+            className="hero-social-links"
+            style={{
+              marginLeft: 'auto',
+              display:    'flex',
+              gap:        '1rem',
+              alignItems: 'center',
+            }}
+          >
             {[
               { label: 'GH', href: SITE.github },
               { label: 'LI', href: SITE.linkedin },
@@ -358,13 +363,13 @@ export default function HeroSection() {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  fontFamily:    'var(--font-mono)',
-                  fontSize:      '0.6rem',
-                  letterSpacing: '0.12em',
-                  color:         'var(--ghost)',
-                  textTransform: 'uppercase',
-                  transition:    'color 0.2s ease',
-                  textDecoration:'none',
+                  fontFamily:     'var(--font-mono)',
+                  fontSize:       '0.6rem',
+                  letterSpacing:  '0.12em',
+                  color:          'var(--ghost)',
+                  textTransform:  'uppercase',
+                  transition:     'color 0.2s ease',
+                  textDecoration: 'none',
                 }}
                 onMouseEnter={e => e.currentTarget.style.color = 'var(--muted)'}
                 onMouseLeave={e => e.currentTarget.style.color = 'var(--ghost)'}
@@ -379,13 +384,33 @@ export default function HeroSection() {
         <div ref={statsRef} style={{ opacity: 0 }}>
           <HeroStats />
         </div>
-
       </div>
 
-      {/* Responsive: hide video on small screens */}
       <style>{`
-        @media (max-width: 640px) {
-          [data-video-layer] { display: none !important; }
+        /* ── Mobile: hide video layer & toggle ── */
+        @media (max-width: 767px) {
+          .hero-video-layer  { display: none !important; }
+          .hero-video-toggle { display: none !important; }
+
+          /* Tighten section padding on mobile */
+          section {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+          }
+
+          /* Push social links below CTA buttons on mobile */
+          .hero-social-links {
+            margin-left: 0 !important;
+            width: 100%;
+          }
+        }
+
+        /* ── Tablet: show video but smaller ── */
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .hero-video-layer {
+            width: 45vw !important;
+            left: 52% !important;
+          }
         }
       `}</style>
     </section>
