@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://saksham.me/sitemap.xml
+Sitemap: https://sakshams.me/sitemap.xml
 
 # Block common noise paths
 Disallow: /api/

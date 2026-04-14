@@ -5,7 +5,7 @@
  * OG images: 1200×630 recommended. Place them in /public/og/
  */
 
-const SITE_URL = 'https://saksham.me'  // ← swap when live
+const SITE_URL = 'https://sakshams.me'  // ← swap when live
 
 export const META = {
   home: {

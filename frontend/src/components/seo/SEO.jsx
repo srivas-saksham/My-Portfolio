@@ -25,7 +25,7 @@
 import { Helmet } from 'react-helmet-async'
 
 // ─── Site-wide constants ──────────────────────────────────────────────────────
-const SITE_URL    = 'https://saksham.me'   // ← swap when domain is live
+const SITE_URL    = 'https://sakshams.me'   // ← swap when domain is live
 const SITE_NAME   = 'Saksham Srivastava'
 const TWITTER_HANDLE = '@saksham_dev'       // ← update if you have one
 const DEFAULT_IMAGE  = `${SITE_URL}/og/og-default.png`  // 1200×630
