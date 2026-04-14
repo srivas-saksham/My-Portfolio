@@ -106,6 +106,13 @@ export default function AboutBio() {
         ref={portraitRef}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        onMouseMove={(e) => {
+          const rect = portraitRef.current.getBoundingClientRect()
+          const x = ((e.clientX - rect.left) / rect.width) * 100
+          const y = ((e.clientY - rect.top) / rect.height) * 100
+          portraitRef.current.style.setProperty('--mx', `${x}%`)
+          portraitRef.current.style.setProperty('--my', `${y}%`)
+        }}
         style={{
           position:   'relative',
           aspectRatio:'3/4',
@@ -122,11 +129,62 @@ export default function AboutBio() {
             position:        'absolute',
             inset:           0,
             backgroundImage: `
-              linear-gradient(rgba(71,49,152,0.08) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(71,49,152,0.08) 1px, transparent 1px)
+              linear-gradient(rgba(71,49,152,0.10) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(71,49,152,0.10) 1px, transparent 1px)
             `,
             backgroundSize:  '32px 32px',
-            zIndex:          0,
+            zIndex:          2,
+          }}
+        />
+
+        {/* Glow layer — follows cursor */}
+        <div
+          aria-hidden="true"
+          style={{
+            position:        'absolute',
+            inset:           0,
+            backgroundImage: `
+              linear-gradient(rgba(71,49,152,0.55) 2px, transparent 1px),
+              linear-gradient(90deg, rgba(71,49,152,0.55) 2px, transparent 1px)
+            `,
+            backgroundSize:  '32px 32px',
+            WebkitMaskImage: 'radial-gradient(circle 60px at var(--mx, 50%) var(--my, 50%), black 0%, transparent 100%)',
+            maskImage:       'radial-gradient(circle 60px at var(--mx, 50%) var(--my, 50%), black 0%, transparent 100%)',
+            zIndex:          3,
+            opacity:         hovered ? 1 : 0,
+            transition:      'opacity 0.3s ease',
+          }}
+        />
+
+        {/* Transparent character cutout — above grid */}
+        <img  
+          src="/assets/portraits/1 (5) T.png"
+          alt=""
+          aria-hidden="true"
+          style={{
+            position:       'absolute',
+            inset:          0,
+            width:          '100%',
+            height:         '100%',
+            objectFit:      'cover',
+            objectPosition: 'center 50%',
+            zIndex:         4,
+          }}
+        />
+
+        {/* Portrait image */}
+        <img
+          src="/assets/portraits/1 (5).png"
+          alt="Saksham Srivastava"
+          style={{
+            position:       'absolute',
+            inset:          0,
+            width:          '100%',
+            height:         '100%',
+            objectFit:      'cover',
+            objectPosition: 'center 50%',
+            zIndex:         1,
+            opacity:        0.85,
           }}
         />
 
@@ -135,8 +193,8 @@ export default function AboutBio() {
           position:         'absolute',
           inset:            0,
           display:          'flex',
-          alignItems:       'center',
-          justifyContent:   'center',
+          alignItems:       'start',
+          justifyContent:   'end',
           fontFamily:       'var(--font-display)',
           fontSize:         'clamp(4rem, 10vw, 7rem)',
           fontWeight:       700,
@@ -144,7 +202,7 @@ export default function AboutBio() {
           color:            'transparent',
           WebkitTextStroke: '1px rgba(71,49,152,0.25)',
           userSelect:       'none',
-          zIndex:           1,
+          zIndex:           4,
           transition:       'color 0.3s ease',
         }}>
           SS
@@ -158,7 +216,7 @@ export default function AboutBio() {
           right:      0,
           padding:    '0.75rem',
           background: 'linear-gradient(transparent, rgba(8,8,8,0.9))',
-          zIndex:     2,
+          zIndex:     5,
         }}>
           <span style={{
             fontFamily:    'var(--font-mono)',
@@ -167,7 +225,7 @@ export default function AboutBio() {
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
           }}>
-            Saksham Srivastava — 2025
+            Saksham Srivastava — 2026
           </span>
         </div>
 
@@ -179,7 +237,7 @@ export default function AboutBio() {
               position:   'absolute',
               inset:      0,
               background: 'linear-gradient(135deg, rgba(71,49,152,0.07) 0%, transparent 60%)',
-              zIndex:     1,
+              zIndex:     4,
               transition: 'opacity 0.3s ease',
             }}
           />

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AvailableBadge from './AvailableBadge'
@@ -16,8 +16,11 @@ export default function HeroSection() {
   const actionsRef  = useRef(null)
   const badgeRef    = useRef(null)
   const statsRef    = useRef(null)
+  const videoRef    = useRef(null)
+  const videoWrapRef = useRef(null)
+  const [playing, setPlaying] = useState(true)
 
-  // Entrance animation
+  // Entrance animation — unchanged
   useEffect(() => {
     const tl = gsap.timeline({ delay: 0.15 })
 
@@ -50,7 +53,45 @@ export default function HeroSection() {
       { opacity: 1, y: 0, duration: 0.7, ease: 'expo.out' },
       '-=0.4'
     )
+
+    // Fade video in slowly after hero loads
+    if (videoWrapRef.current) {
+      gsap.fromTo(videoWrapRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 2.5, ease: 'power2.inOut', delay: 0.6 }
+      )
+    }
   }, [])
+
+  // Subtle mouse parallax on video
+  useEffect(() => {
+    const section = sectionRef.current
+    const videoWrap = videoWrapRef.current
+    if (!section || !videoWrap) return
+
+    const handleMouseMove = (e) => {
+      const { clientX, clientY } = e
+      const { innerWidth, innerHeight } = window
+      const dx = (clientX / innerWidth  - 0.5) * 18  // max ±9px
+      const dy = (clientY / innerHeight - 0.5) * 12  // max ±6px
+      gsap.to(videoWrap, {
+        x: dx,
+        y: dy,
+        duration: 1.8,
+        ease: 'power2.out',
+      })
+    }
+
+    section.addEventListener('mousemove', handleMouseMove)
+    return () => section.removeEventListener('mousemove', handleMouseMove)
+  }, [])
+
+  const toggleVideo = () => {
+    if (videoRef.current) {
+      playing ? videoRef.current.pause() : videoRef.current.play()
+      setPlaying(!playing)
+    }
+  }
 
   return (
     <section
@@ -65,6 +106,7 @@ export default function HeroSection() {
         background: 'var(--bg-base)',
       }}
     >
+      {/* ── Layer 1: Scene grid (lowest) ── */}
       <SceneBackground
         gridSize={72}
         gridOpacity={0.13}
@@ -76,8 +118,125 @@ export default function HeroSection() {
         parallaxStrength={1}
       />
 
-      {/* ── Content ── */}
-      <div style={{ position: 'relative', zIndex: 1, maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
+      {/* ── Layer 2: Cinematic video (middle) ── */}
+      <div
+        ref={videoWrapRef}
+        aria-hidden="true"
+        style={{
+          position:  'absolute',
+          // Anchored behind the name block — right-center
+          top:       '-10%',
+          left:     '55%',
+          width:       'clamp(320px, 55vw, 720px)',
+          aspectRatio: '9/16',
+          zIndex:    1,           // above SceneBackground, below text
+          opacity:   0,           // GSAP fades this in
+          // Feathered radial mask — no hard edges anywhere
+          WebkitMaskImage: `radial-gradient(
+            ellipse 72% 78% at 50% 46%,
+            black 0%,
+            black 28%,
+            rgba(0,0,0,0.85) 45%,
+            rgba(0,0,0,0.4)  62%,
+            rgba(0,0,0,0.1)  78%,
+            transparent      100%
+          )`,
+          maskImage: `radial-gradient(
+            ellipse 72% 78% at 50% 46%,
+            black 0%,
+            black 28%,
+            rgba(0,0,0,0.85) 45%,
+            rgba(0,0,0,0.4)  62%,
+            rgba(0,0,0,0.1)  78%,
+            transparent      100%
+          )`,
+        }}
+      >
+        {/* Video element */}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            width:     '100%',
+            height:    '100%',
+            objectFit: 'cover',
+            display:   'block',
+            // Desaturate, darken, slight contrast boost — pushes it into depth
+            filter:    'brightness(0.38) saturate(0.25) contrast(1.15) blur(0.4px)',
+            mixBlendMode: 'lighten',
+          }}
+        >
+          <source src="/assets/portraits/vid.mp4" type="video/mp4" />
+        </video>
+
+        {/* Indigo tint overlay — theme cohesion */}
+        <div
+          style={{
+            position:   'absolute',
+            inset:      0,
+            background: 'radial-gradient(ellipse 60% 60% at 50% 44%, rgba(71,49,152,0.13) 0%, transparent 70%)',
+            mixBlendMode: 'screen',
+            pointerEvents: 'none',
+          }}
+        />
+      </div>
+
+      {/* Pause / Play toggle — outside mask wrapper so it's always visible */}
+      <button
+        onClick={toggleVideo}
+        aria-hidden="false"
+        style={{
+          position:             'absolute',
+          top:                  '5rem',
+          right:                '2.5rem',
+          zIndex:               10,
+          display:              'flex',
+          alignItems:           'center',
+          gap:                  '0.45rem',
+          background:           'rgba(8,8,8,0.55)',
+          border:               '1px solid rgba(255,255,255,0.08)',
+          backdropFilter:       'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          padding:              '0.35rem 0.65rem',
+          cursor:               'pointer',
+          transition:           'border-color 0.2s ease, background 0.2s ease',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = 'rgba(71,49,152,0.5)'
+          e.currentTarget.style.background  = 'rgba(71,49,152,0.15)'
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+          e.currentTarget.style.background  = 'rgba(8,8,8,0.55)'
+        }}
+      >
+        <span style={{
+          display:        'flex',
+          alignItems:     'center',
+          justifyContent: 'center',
+          width:          '8px',
+          color:          'rgba(245,245,245,0.5)',
+          fontSize:       '0.5rem',
+          lineHeight:     1,
+        }}>
+          {playing ? '❙❙' : '▶'}
+        </span>
+        <span style={{
+          fontFamily:    'var(--font-mono)',
+          fontSize:      '0.48rem',
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          color:         'rgba(245,245,245,0.35)',
+        }}>
+          {playing ? 'pause' : 'play'}
+        </span>
+      </button>
+
+      {/* ── Layer 3: Content (top) ── */}
+      <div style={{ position: 'relative', zIndex: 2, maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
 
         {/* Badge */}
         <div ref={badgeRef} style={{ opacity: 0, marginBottom: '2.5rem' }}>
@@ -118,7 +277,7 @@ export default function HeroSection() {
                 lineHeight:           0.88,
                 letterSpacing:        '-0.04em',
                 color:                'transparent',
-                WebkitTextStroke:     '1px rgba(245,245,245,0.45)',
+                WebkitTextStroke:     '0px rgba(245,245,245,0.45)',
                 display:              'block',
                 transform:            'translateY(110%)',
                 paddingLeft:          'clamp(1.5rem, 5vw, 7rem)',
@@ -133,10 +292,7 @@ export default function HeroSection() {
         </div>
 
         {/* Divider line with gradient */}
-        <div
-          ref={subRef}
-          style={{ opacity: 0 }}
-        >
+        <div ref={subRef} style={{ opacity: 0 }}>
           <div style={{
             display:      'flex',
             alignItems:   'center',
@@ -186,7 +342,6 @@ export default function HeroSection() {
             Resume ↓
           </Button>
 
-          {/* Inline social hint */}
           <div style={{
             marginLeft: 'auto',
             display:    'flex',
@@ -226,6 +381,13 @@ export default function HeroSection() {
         </div>
 
       </div>
+
+      {/* Responsive: hide video on small screens */}
+      <style>{`
+        @media (max-width: 640px) {
+          [data-video-layer] { display: none !important; }
+        }
+      `}</style>
     </section>
   )
 }
