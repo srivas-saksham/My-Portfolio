@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://saksham.dev/sitemap.xml
+
+# Block common noise paths
+Disallow: /api/
+Disallow: /_vercel/

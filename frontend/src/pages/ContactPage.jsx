@@ -163,7 +163,13 @@ export default function ContactPage() {
 
   return (
     <PageWrapper>
-      <SEO title={META.contact.title} description={META.contact.description} />
+      <SEO
+        title={META.contact.title}
+        description={META.contact.description}
+        path={META.contact.path}
+        image={META.contact.image}
+        keywords={META.contact.keywords}
+      />
 
       {/* ── 01 HERO ──────────────────────────────────────────────────────── */}
       <section style={{

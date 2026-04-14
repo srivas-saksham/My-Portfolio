@@ -122,7 +122,13 @@ export default function ProjectsPage() {
 
   return (
     <PageWrapper>
-      <SEO title={META.projects.title} description={META.projects.description} />
+      <SEO
+        title={META.projects.title}
+        description={META.projects.description}
+        path={META.projects.path}
+        image={META.projects.image}
+        keywords={META.projects.keywords}
+      />
 
       <section
         className="projects-section"

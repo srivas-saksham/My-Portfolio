@@ -69,7 +69,13 @@ const ACHIEVEMENTS = [
 export default function AboutPage() {
   return (
     <PageWrapper>
-      <SEO title={META.about.title} description={META.about.description} />
+      <SEO
+        title={META.about.title}
+        description={META.about.description}
+        path={META.about.path}
+        image={META.about.image}
+        keywords={META.about.keywords}
+      />
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section style={{ padding: 'clamp(4rem, 8vw, 8rem) 2.5rem' }} className="about-hero-section">

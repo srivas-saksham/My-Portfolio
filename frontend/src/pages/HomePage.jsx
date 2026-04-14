@@ -11,6 +11,10 @@ export default function HomePage() {
       <SEO
         title={META.home.title}
         description={META.home.description}
+        path={META.home.path}
+        image={META.home.image}
+        keywords={META.home.keywords}
+        isHomePage={true}
       />
       <HeroSection />
       <SkillsOrbit /> 

@@ -31,6 +31,7 @@ import ProjectLivePreview        from '@components/projects/ProjectLivePreview'
 
 import { useProjectAssets } from '@hooks/useProjectAssets'
 import { PROJECTS } from '@data/projects'
+import { getProjectMeta } from '@data/meta'
 
 function parseAccent(raw) {
   return raw ?? 'rgba(71,49,152,0.15)'
@@ -564,12 +565,17 @@ export default function ProjectDetailPage() {
   const techIdx       = ++sectionIdx
 
   const fmt = (n) => String(n).padStart(2, '0')
-
+  const seo = getProjectMeta(project)
+  
   return (
     <PageWrapper style={{ paddingTop: '80px' }}>
       <SEO
-        title={`${project.title} — Saksham Srivastava`}
-        description={project.tagline}
+        title={seo.title}
+        description={seo.description}
+        path={seo.path}
+        image={seo.image}
+        type={seo.type}
+        keywords={seo.keywords}
       />
 
       {/* Back link */}
