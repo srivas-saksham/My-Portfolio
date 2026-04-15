@@ -190,9 +190,7 @@ export default function HeroSection() {
           playsInline
           style={{
             position:       'absolute',
-            top:            -130,
-            left:           100,
-            inset:          0,
+            transform:     'translateX(50%) translateY(-60%)',
             width:          '100%',
             height:         '100%',
             objectFit:      'cover',
@@ -204,7 +202,7 @@ export default function HeroSection() {
             scale:          '50%',
           }}
         >
-          <source src="/assets/portraits/vidM.mp4" type="video/mp4" />
+          <source src="/assets/portraits/vidMR1.mp4" type="video/mp4" />
         </video>
 
         {/* Multi-layer mobile overlay for readability */}

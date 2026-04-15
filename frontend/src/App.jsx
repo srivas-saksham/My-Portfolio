@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Navbar      from '@components/layout/Navbar'
 import Footer      from '@components/layout/Footer'
 import CustomCursor from '@components/layout/CustomCursor'
+import MobileNotice from '@components/ui/MobileNotice'
 
 import HomePage          from '@pages/HomePage'
 import ProjectsPage      from '@pages/ProjectsPage'
@@ -46,6 +47,7 @@ function ScrollReset() {
 function AppShell() {
   return (
     <>
+      <MobileNotice />
       {/* Thin indigo reading-progress bar at the very top */}
       <ScrollProgressBar color="var(--indigo)" height="2px" zIndex={9998} />
 
