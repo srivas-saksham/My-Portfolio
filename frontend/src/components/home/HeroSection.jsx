@@ -165,7 +165,7 @@ export default function HeroSection() {
             mixBlendMode: 'lighten',
           }}
         >
-          <source src="/assets/portraits/vidMR1.mp4" type="video/mp4" />
+          <source src="/assets/portraits/vidMR1E.mp4" type="video/mp4" />
         </video>
 
         <div style={{
@@ -202,7 +202,7 @@ export default function HeroSection() {
             scale:          '50%',
           }}
         >
-          <source src="/assets/portraits/vidMR1.mp4" type="video/mp4" />
+          <source src="/assets/portraits/vidMR1E.mp4" type="video/mp4" />
         </video>
 
         {/* Multi-layer mobile overlay for readability */}
