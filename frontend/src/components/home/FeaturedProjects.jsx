@@ -235,15 +235,6 @@ function MobileProjectCard({ project }) {
               filter:         'brightness(0.65) saturate(0.85)',
             }}
           />
-          <div style={{
-            position:   'absolute',
-            top:        0,
-            left:       0,
-            right:      0,
-            height:     '45%',
-            background: 'linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,0.5) 100%)',
-            pointerEvents: 'none',
-          }} />
         </div>
       ) : (
         <div style={{

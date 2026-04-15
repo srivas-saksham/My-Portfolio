@@ -117,11 +117,11 @@ export default function HeroSection() {
         parallaxStrength={1}
       />
 
-      {/* ── Layer 2: Cinematic video — hidden on mobile ── */}
+      {/* ── Layer 2: Desktop cinematic video ── */}
       <div
         ref={videoWrapRef}
         aria-hidden="true"
-        className="hero-video-layer"
+        className="hero-video-layer hero-video-desktop"
         style={{
           position:  'absolute',
           top:       '-10%',
@@ -165,7 +165,7 @@ export default function HeroSection() {
             mixBlendMode: 'lighten',
           }}
         >
-          <source src="/assets/portraits/vidM.mp4" type="video/mp4" />
+          <source src="/assets/portraits/vidMR1.mp4" type="video/mp4" />
         </video>
 
         <div style={{
@@ -177,7 +177,66 @@ export default function HeroSection() {
         }} />
       </div>
 
-      {/* Pause/Play toggle — hidden on mobile */}
+      {/* ── Layer 2b: Mobile video — full-bleed background ── */}
+      <div
+        aria-hidden="true"
+        className="hero-video-mobile"
+        style={{ display: 'none' }}
+      >
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position:       'absolute',
+            top:            -130,
+            left:           100,
+            inset:          0,
+            width:          '100%',
+            height:         '100%',
+            objectFit:      'cover',
+            objectPosition: 'center 15%',
+            display:        'block',
+            filter:         'brightness(0.28) saturate(0.2) contrast(1.1)',
+            mixBlendMode:   'lighten',
+            zIndex:         0,
+            scale:          '50%',
+          }}
+        >
+          <source src="/assets/portraits/vidM.mp4" type="video/mp4" />
+        </video>
+
+        {/* Multi-layer mobile overlay for readability */}
+        <div style={{
+          position:   'absolute',
+          inset:      0,
+          background: `
+            linear-gradient(
+              180deg,
+              rgba(8,8,8,0.62)   0%,
+              rgba(8,8,8,0.28)  30%,
+              rgba(8,8,8,0.18)  55%,
+              rgba(8,8,8,0.72)  80%,
+              rgba(8,8,8,0.96) 100%
+            )
+          `,
+          zIndex:     1,
+          pointerEvents: 'none',
+        }} />
+
+        {/* Purple accent tint */}
+        <div style={{
+          position:     'absolute',
+          inset:        0,
+          background:   'radial-gradient(ellipse 80% 60% at 50% 30%, rgba(71,49,152,0.18) 0%, transparent 70%)',
+          mixBlendMode: 'screen',
+          zIndex:       2,
+          pointerEvents:'none',
+        }} />
+      </div>
+
+      {/* Pause/Play toggle — desktop only */}
       <button
         onClick={toggleVideo}
         className="hero-video-toggle"
@@ -387,30 +446,77 @@ export default function HeroSection() {
       </div>
 
       <style>{`
-        /* ── Mobile: hide video layer & toggle ── */
+        /* ─────────────────────────────────────────────────
+           MOBILE HERO REDESIGN  (≤ 767px)
+        ───────────────────────────────────────────────── */
         @media (max-width: 767px) {
-          .hero-video-layer  { display: none !important; }
+
+          /* Hide desktop video, show mobile video */
+          .hero-video-desktop { display: none !important; }
+          .hero-video-mobile  { display: block !important; }
+
+          /* Hide desktop-only toggle */
           .hero-video-toggle { display: none !important; }
 
-          /* Tighten section padding on mobile */
+          /* Section: full-viewport, centered column, generous padding */
           section {
-            padding-left: 1.25rem !important;
-            padding-right: 1.25rem !important;
+            min-height:      100svh !important;
+            display:         flex !important;
+            flex-direction:  column !important;
+            justify-content: flex-end !important;
+            align-items:     flex-start !important;
+            padding:         5rem 1.5rem 3rem !important;
           }
 
-          /* Push social links below CTA buttons on mobile */
+          /* Content wrapper: push to bottom of video */
+          section > div:last-of-type {
+            width: 100% !important;
+          }
+
+          /* Badge: smaller bottom gap on mobile */
+          section [style*="marginBottom: '2.5rem'"] {
+            margin-bottom: 1.75rem !important;
+          }
+
+          /* Name block: tighten slightly — already responsive via clamp */
+          /* tagline / sub area: wrap dots gracefully */
+          section p[style*="letterSpacing: '0.14em'"] {
+            line-height: 2 !important;
+          }
+
+          /* Actions row: full-width column on mobile */
+          section [style*="flexWrap: 'wrap'"][style*="alignItems: 'center'"] {
+            flex-direction: column !important;
+            align-items:    flex-start !important;
+            gap:            0.85rem !important;
+          }
+
+          /* CTA buttons: full-width */
+          section [style*="flexWrap: 'wrap'"][style*="alignItems: 'center'"] > a,
+          section [style*="flexWrap: 'wrap'"][style*="alignItems: 'center'"] > button {
+            width:           100% !important;
+            justify-content: center !important;
+            text-align:      center !important;
+          }
+
+          /* Social links: row, below buttons, no auto-margin */
           .hero-social-links {
-            margin-left: 0 !important;
-            width: 100%;
+            margin-left:     0 !important;
+            width:           100% !important;
+            justify-content: flex-start !important;
+            padding-top:     0.25rem !important;
           }
         }
 
-        /* ── Tablet: show video but smaller ── */
+        /* ─────────────────────────────────────────────────
+           TABLET  (768px – 1023px)
+        ───────────────────────────────────────────────── */
         @media (min-width: 768px) and (max-width: 1023px) {
-          .hero-video-layer {
+          .hero-video-desktop {
             width: 45vw !important;
             left: 52% !important;
           }
+          .hero-video-mobile { display: none !important; }
         }
       `}</style>
     </section>

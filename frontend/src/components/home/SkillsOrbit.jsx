@@ -1,9 +1,10 @@
 /**
- * TechMarquee.jsx — Fully Responsive
+ * SkillsOrbit.jsx — Fully Responsive
  *
  * Desktop: unchanged — logo morphs to large brand typography on hover, physics push
- * Mobile/Tablet: simplified marquee — logos only, no complex hover physics
- *                (touch devices can't hover anyway)
+ * Mobile:  Premium dual-row staggered marquee — Row A scrolls →, Row B scrolls ←
+ *          Larger touch-friendly icons (48px), section label, gentle fade edges
+ *          No complex physics (touch devices can't hover anyway)
  */
 
 import { useState, useRef, useCallback, useEffect, useLayoutEffect } from 'react'
@@ -53,7 +54,12 @@ const ICONS = [
   { icon: 'airtable',    color: '#18BFFF', label: 'Airtable',   font: "'Roboto', sans-serif",                                     googleKey: 'Roboto',          weight: 500, ls: '-0.01em' },
 ]
 
-const TRACK = [...ICONS, ...ICONS]
+// Split into two staggered rows for the mobile dual-marquee
+const ROW_A = ICONS.filter((_, i) => i % 2 === 0)   // 10 items
+const ROW_B = ICONS.filter((_, i) => i % 2 !== 0)   // 10 items
+
+// Desktop track — doubled for seamless loop
+const TRACK    = [...ICONS, ...ICONS]
 const ITEM_GAP    = 36
 const BASE_WIDTH  = 52
 const FONT_SIZE   = 42
@@ -230,9 +236,9 @@ function Logo({ item, isHot, offset, onEnter, onLeave }) {
   )
 }
 
-// ─── Simplified mobile logo (just icon, no hover) ────────────────────────────
-function MobileLogo({ item }) {
-  const { icon, devicon, color } = item
+// ─── Mobile icon chip — icon + label pill ─────────────────────────────────────
+function MobileChip({ item }) {
+  const { icon, devicon, color, label } = item
   const hex = color ?? '#888'
 
   const imgSrc = icon
@@ -242,28 +248,73 @@ function MobileLogo({ item }) {
       : null
 
   return (
-    <div style={{
-      flexShrink:     0,
-      width:          '40px',
-      height:         '40px',
-      display:        'flex',
-      alignItems:     'center',
-      justifyContent: 'center',
-    }}>
+    <div
+      aria-label={label}
+      style={{
+        flexShrink:    0,
+        display:       'inline-flex',
+        alignItems:    'center',
+        gap:           '0.55rem',
+        padding:       '0.55rem 1rem 0.55rem 0.75rem',
+        background:    'rgba(255,255,255,0.03)',
+        border:        '1px solid rgba(255,255,255,0.06)',
+        borderRadius:  '99px',
+        whiteSpace:    'nowrap',
+        userSelect:    'none',
+      }}
+    >
       {imgSrc && (
         <img
           src={imgSrc}
-          alt={item.label}
-          width={36}
-          height={36}
+          alt=""
+          aria-hidden="true"
+          width={20}
+          height={20}
           loading="lazy"
           style={{
             display:   'block',
             objectFit: 'contain',
-            filter:    'brightness(0.55) saturate(0.75)',
+            flexShrink: 0,
+            filter:    'brightness(0.7) saturate(0.8)',
           }}
         />
       )}
+      <span style={{
+        fontFamily:    'var(--font-mono)',
+        fontSize:      '0.62rem',
+        letterSpacing: '0.06em',
+        color:         'var(--muted)',
+        textTransform: 'uppercase',
+        lineHeight:    1,
+      }}>
+        {label}
+      </span>
+    </div>
+  )
+}
+
+// ─── Mobile marquee row ───────────────────────────────────────────────────────
+function MobileRow({ items, direction = 'forward', speed = 38 }) {
+  // Double items for seamless loop
+  const track = [...items, ...items]
+
+  return (
+    <div style={{
+      overflow: 'hidden',
+      width:    '100%',
+    }}>
+      <div style={{
+        display:    'flex',
+        gap:        '10px',
+        width:      'max-content',
+        alignItems: 'center',
+        animation:  `mobile-marquee-${direction} ${speed}s linear infinite`,
+        willChange: 'transform',
+      }}>
+        {track.map((item, i) => (
+          <MobileChip key={`${direction}-${item.label}-${i}`} item={item} />
+        ))}
+      </div>
     </div>
   )
 }
@@ -324,35 +375,70 @@ export default function TechMarquee() {
         </div>
       </div>
 
-      {/* ── Mobile marquee: simplified, icons only ── */}
+      {/* ── Mobile marquee: dual counter-scrolling rows ── */}
       <div className="marquee-mobile" style={{ display: 'none' }}>
+        {/* Section label */}
         <div style={{
-          display:    'flex',
-          gap:        '28px',
-          width:      'max-content',
-          alignItems: 'center',
-          animation:  'tm 40s linear infinite',
-          willChange: 'transform',
+          display:       'flex',
+          alignItems:    'center',
+          gap:           '0.75rem',
+          padding:       '0 1.5rem',
+          marginBottom:  '1.5rem',
         }}>
-          {TRACK.map((item, i) => (
-            <MobileLogo key={`mob-${item.label}-${i}`} item={item} />
-          ))}
+          <div style={{
+            width:      '16px',
+            height:     '1px',
+            background: 'rgba(71,49,152,0.6)',
+            flexShrink: 0,
+          }} />
+          <span style={{
+            fontFamily:    'var(--font-mono)',
+            fontSize:      '0.58rem',
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color:         'var(--ghost)',
+          }}>
+            Tech Stack
+          </span>
         </div>
+
+        {/* Row A → */}
+        <div style={{ marginBottom: '10px' }}>
+          <MobileRow items={ROW_A} direction="forward" speed={36} />
+        </div>
+
+        {/* Row B ← (reverse) */}
+        <MobileRow items={ROW_B} direction="reverse" speed={42} />
       </div>
 
       <style>{`
+        /* Desktop marquee keyframe (unchanged) */
         @keyframes tm {
           from { transform: translateX(0); }
           to   { transform: translateX(-50%); }
         }
 
-        /* Mobile: simplified logos only, faster speed */
+        /* Mobile dual-row keyframes */
+        @keyframes mobile-marquee-forward {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+        @keyframes mobile-marquee-reverse {
+          from { transform: translateX(-50%); }
+          to   { transform: translateX(0); }
+        }
+
+        /* ─────────────────────────────────────────────────
+           MOBILE  (≤ 767px)
+        ───────────────────────────────────────────────── */
         @media (max-width: 767px) {
           .marquee-desktop { display: none !important; }
           .marquee-mobile  { display: block !important; }
         }
 
-        /* Tablet: desktop marquee but slightly smaller */
+        /* ─────────────────────────────────────────────────
+           TABLET  (768px – 1023px) — keep desktop marquee
+        ───────────────────────────────────────────────── */
         @media (min-width: 768px) and (max-width: 1023px) {
           .marquee-desktop { display: block !important; }
           .marquee-mobile  { display: none !important; }
