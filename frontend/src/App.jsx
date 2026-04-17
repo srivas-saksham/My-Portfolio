@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Analytics } from "@vercel/analytics/next"
 
 import Navbar      from '@components/layout/Navbar'
 import Footer      from '@components/layout/Footer'
@@ -47,6 +48,7 @@ function ScrollReset() {
 function AppShell() {
   return (
     <>
+      <Analytics/>
       <MobileNotice />
       {/* Thin indigo reading-progress bar at the very top */}
       <ScrollProgressBar color="var(--indigo)" height="2px" zIndex={9998} />
