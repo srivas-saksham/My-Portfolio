@@ -42,7 +42,7 @@ export const PROJECTS = [
     status:      'Live',
     year:        '2025',
     live:        'https://vyan-security.vercel.app/',
-    github:      'https://srivas-saksham.github.io/Vyan-Security/',
+    github:      'https://github.com/srivas-saksham/Vyan-Security',
     hasVideo:    false,
     accentColor: 'rgba(59, 130, 246, 0.12)',   // steel-blue
   },

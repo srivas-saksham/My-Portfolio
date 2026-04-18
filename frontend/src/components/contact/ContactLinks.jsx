@@ -100,7 +100,7 @@ function LinkRow({ link, isFirst }) {
         }}>
           <span style={{
             fontFamily:    'var(--font-mono)',
-            fontSize:      '0.5rem',
+            fontSize:      '0.55rem',
             color:         'var(--ghost)',
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
@@ -112,7 +112,7 @@ function LinkRow({ link, isFirst }) {
             fontSize:      '0.5rem',
             color:         'var(--ghost)',
             letterSpacing: '0.04em',
-            opacity:       0.55,
+            opacity:       0.95,
           }}>
             · {link.hint}
           </span>
