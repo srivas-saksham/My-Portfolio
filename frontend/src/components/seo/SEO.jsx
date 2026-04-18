@@ -144,13 +144,13 @@ export default function SEO({
       <meta name="twitter:image"       content={resolvedImage} />
       <meta name="twitter:image:alt"   content={resolvedTitle} />
 
-      {/* ── Favicons ──────────────────────────────────────────────────── */}
-      <link rel="icon" type="image/png" href="/main_favicon_transparent.png" media="(prefers-color-scheme: light)" />
+      {/* ── Favicons whole commented out becuas eit overrides the main.jsx favicon js ─────────────────────────────── */}
+      {/* <link rel="icon" type="image/png" href="/main_favicon_transparent.png" media="(prefers-color-scheme: light)" />
       <link rel="icon" type="image/png" href="/main_favicon_transparent_dark.png" media="(prefers-color-scheme: dark)" />
       <link rel="shortcut icon" href="/favicon.ico" />
       <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
       <meta name="apple-mobile-web-app-title" content="Sakshams" />
-      <link rel="manifest" href="/site.webmanifest" />
+      <link rel="manifest" href="/site.webmanifest" /> */}
 
       {/* ── JSON-LD structured data ─────────────────────────────────────── */}
       {isHomePage && (

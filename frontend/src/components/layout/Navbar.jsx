@@ -107,6 +107,11 @@ export default function Navbar() {
 
         /* Mobile overlay link active state */
         .mobile-link-active { color: var(--text) !important; }
+
+        /* Navbar logo hover swap */
+        a:hover .navbar-logo-dark  { transform: translateY(-100%) !important; }
+        a:hover .navbar-logo-light { transform: translateY(0%)    !important; }
+
       `}</style>
 
       <nav
@@ -144,23 +149,46 @@ export default function Navbar() {
           }}
         >
           <div style={{
-            width:          '28px',
-            height:         '28px',
-            borderRadius:   '6px',
-            background:     'var(--indigo)',
-            display:        'flex',
-            alignItems:     'center',
-            justifyContent: 'center',
-            flexShrink:     0,
+            width:       '28px',
+            height:      '28px',
+            borderRadius:'6px',
+            flexShrink:  0,
+            position:    'relative',
+            overflow:    'hidden',
           }}>
-            <span style={{
-              fontFamily:    'var(--font-display)',
-              fontSize:      '0.9rem',
-              fontWeight:    700,
-              color:         '#fff',
-              lineHeight:    1,
-              letterSpacing: '-0.02em',
-            }}>S</span>
+            {/* Light image — slides in on hover */}
+            <img
+              src="/main_favicon_transparent_dark.png"
+              alt=""
+              aria-hidden="true"
+              style={{
+                position:   'absolute',
+                inset:      0,
+                width:      '100%',
+                height:     '100%',
+                objectFit:  'cover',
+                display:    'block',
+                transform:  'translateY(100%)',
+                transition: 'transform 0.85s cubic-bezier(0.19,1,0.22,1)',
+              }}
+              className="navbar-logo-light"
+            />
+            {/* Dark image — default, slides out on hover */}
+            <img
+              src="/main_favicon_transparent.png"
+              alt="Saksham"
+              style={{
+                position:   'absolute',
+                inset:      0,
+                width:      '100%',
+                height:     '100%',
+                objectFit:  'cover',
+                display:    'block',
+                transform:  'translateY(0%)',
+                transition: 'transform 0.85s cubic-bezier(0.19,1,0.22,1)',
+              }}
+              className="navbar-logo-dark"
+            />
           </div>
           <span style={{
             fontFamily:    'var(--font-mono)',
@@ -170,7 +198,7 @@ export default function Navbar() {
             textTransform: 'uppercase',
             color:         'var(--text)',
           }}>
-            Saksham<span style={{ color: 'var(--muted)', marginLeft: '2px' }}>.</span>
+            Sakshams<span style={{ color: 'var(--muted)', marginLeft: '2px' }}>.</span>
           </span>
         </Link>
 
